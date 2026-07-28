@@ -65,8 +65,47 @@ app.use('/api/users', userRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/subscribers', subscriberRoutes);
 
+// Root & Health Check Endpoints
+app.get('/', (req, res) => {
+  res.status(200).send(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Scholarship Portal API</title>
+        <style>
+          body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; text-align: center; }
+          .card { background: #1e293b; border: 1px solid #334155; padding: 2.5rem; border-radius: 1rem; max-width: 480px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
+          h1 { color: #d4af37; font-size: 1.5rem; margin-top: 0; }
+          p { color: #94a3b8; font-size: 0.9rem; line-height: 1.5; }
+          .status { display: inline-block; background: #064e3b; color: #34d399; font-size: 0.75rem; font-weight: bold; padding: 0.25rem 0.75rem; border-radius: 9999px; margin-bottom: 1rem; border: 1px solid #059669; }
+          code { background: #0f172a; color: #f59e0b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-size: 0.85rem; }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <div class="status">✓ API ONLINE</div>
+          <h1>Scholarship Portal Backend Service</h1>
+          <p>The backend server is running successfully and ready to process requests.</p>
+          <p>Endpoints are available under <code>/api/*</code></p>
+        </div>
+      </body>
+    </html>
+  `);
+});
+
+app.get('/api', (req, res) => {
+  res.json({ message: 'Scholarship Portal API is active and running', status: 'ok' });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', service: 'Scholarship Portal API' });
 });
+
+const PORT = process.env.PORT || 5000;
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
 export default app;
