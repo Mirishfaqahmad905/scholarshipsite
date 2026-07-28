@@ -2,40 +2,32 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { UploadCloud, CheckCircle2, AlertCircle, Loader2, X } from 'lucide-react';
 
-interface ImageUploaderProps {
-  value: string;
-  onChange: (filePath: string) => void;
-  label?: string;
-}
-
-export const ImageUploader: React.FC<ImageUploaderProps> = ({
+export const ImageUploader = ({
   value,
   onChange,
   label = 'Upload Image (Stored as Base64 format)',
 }) => {
-  const [uploading, setUploading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const convertFileToBase64 = (file: File): Promise<string> => {
+  const convertFileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
+      reader.onload = () => resolve(reader.result);
       reader.onerror = (err) => reject(err);
     });
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check file type
     if (!file.type.match(/^image\/(jpeg|png|jpg|webp|gif|svg\+xml)$/)) {
       setError('Please upload a valid image file (JPG, PNG, WEBP, SVG)');
       return;
     }
 
-    // Check size limit (8MB)
     if (file.size > 8 * 1024 * 1024) {
       setError('File size must be less than 8MB');
       return;
@@ -45,7 +37,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       setUploading(true);
       setError(null);
 
-      // Try uploading to server first
       const formData = new FormData();
       formData.append('image', file);
 
@@ -64,10 +55,9 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         console.warn('Server upload failed, converting directly to Base64 in browser...');
       }
 
-      // Fallback: convert directly to Base64 in browser
       const base64Uri = await convertFileToBase64(file);
       onChange(base64Uri);
-    } catch (err: any) {
+    } catch (err) {
       console.error('File upload error:', err);
       setError(err.message || 'Failed to process image file into Base64 format');
     } finally {
@@ -93,7 +83,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             alt="Uploaded preview"
             className="w-16 h-16 object-cover rounded-lg border border-slate-800"
             onError={(e) => {
-              (e.target as HTMLImageElement).src = '/uploads/default-scholarship.jpg';
+              e.target.src = '/uploads/default-scholarship.jpg';
             }}
           />
           <div className="flex-1 min-w-0 text-xs">

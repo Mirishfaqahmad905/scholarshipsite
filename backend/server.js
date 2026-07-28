@@ -36,17 +36,22 @@ app.use('/uploads', express.static(backendUploadDir));
 app.use('/backend/assets', express.static(backendAssetsDir));
 app.use('/assets', express.static(backendAssetsDir));
 
-// File Upload API endpoint
+// File Upload API endpoint (Returns Base64 Data URL for serverless/Vercel compatibility)
 app.post('/api/upload', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded' });
   }
-  const filePath = `/uploads/${req.file.filename}`;
+
+  const mimeType = req.file.mimetype || 'image/jpeg';
+  const base64String = req.file.buffer.toString('base64');
+  const base64Url = `data:${mimeType};base64,${base64String}`;
+
   return res.json({
-    filePath,
-    url: filePath,
-    filename: req.file.filename,
-    mimetype: req.file.mimetype,
+    filePath: base64Url,
+    url: base64Url,
+    base64: base64Url,
+    filename: req.file.originalname,
+    mimetype: mimeType,
     size: req.file.size,
   });
 });
