@@ -491,7 +491,7 @@ export const ManageScholarships: React.FC = () => {
                   disabled={submitting}
                   className="px-5 py-2 bg-[#D4AF37] hover:bg-[#e0bc46] text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl shadow"
                 >
-                  {submitting ? 'Saving...' : editingId ? 'Update Listing' : 'Publish Listing'}
+                  {submitting ? 'Saving...' : editingId ? 'Update Listing' : 'Add Scholarship'}
                 </button>
               </div>
             </form>
