@@ -59,6 +59,22 @@ export const Navbar: React.FC = () => {
             >
               Blog & Guides
             </Link>
+            <Link
+              to="/about"
+              className={`px-4 py-2 rounded-lg transition-all ${
+                isActive('/about') ? 'bg-slate-800/80 text-[#D4AF37] font-bold border border-slate-700/60' : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
+              }`}
+            >
+              About Us
+            </Link>
+            <Link
+              to="/contact"
+              className={`px-4 py-2 rounded-lg transition-all ${
+                isActive('/contact') ? 'bg-slate-800/80 text-[#D4AF37] font-bold border border-slate-700/60' : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
+              }`}
+            >
+              Contact Us
+            </Link>
 
             {isAdmin && (
               <Link
@@ -142,6 +158,20 @@ export const Navbar: React.FC = () => {
             className="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800"
           >
             Blog & Articles
+          </Link>
+          <Link
+            to="/about"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800"
+          >
+            About Us
+          </Link>
+          <Link
+            to="/contact"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800"
+          >
+            Contact Us
           </Link>
 
           {isAdmin && (

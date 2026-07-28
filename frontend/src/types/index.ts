@@ -55,7 +55,9 @@ export interface Ad {
     | 'popup'
     | 'scholarship-detail-top'
     | 'scholarship-detail-bottom'
-    | 'blog-sidebar';
+    | 'blog-sidebar'
+    | 'about-page'
+    | 'contact-page';
   active: boolean;
   startDate?: string;
   endDate?: string;

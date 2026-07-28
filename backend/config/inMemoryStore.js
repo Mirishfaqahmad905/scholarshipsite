@@ -260,6 +260,19 @@ export const inMemoryStore = {
       createdAt: new Date('2026-01-01'),
     },
   ],
+  contactInquiries: [
+    {
+      _id: 'inq-1',
+      name: 'Muhammad Imran',
+      email: 'imran.student@gmail.com',
+      phone: '+923001234567',
+      subject: 'CSC Scholarship Recommendation Letters Inquiry',
+      inquiryType: 'CSC / China Scholarship Inquiry',
+      message: 'Respected Sir, I want guidance regarding professor acceptance letters and CSC agency number for Harbin Institute of Technology.',
+      status: 'pending',
+      createdAt: new Date('2026-07-27T10:00:00Z'),
+    },
+  ],
   subscribers: [
     {
       _id: 'sub-1',
@@ -289,7 +302,7 @@ export const inMemoryStore = {
     siteName: 'Global Scholarship Portal',
     siteLink: 'https://scholarship-portal.vercel.app',
     contactEmail: 'techhub905@gmail.com',
-    whatsapp: '+1234567890',
+    whatsapp: '+92-346-3079238',
     whatsappMessage: 'Hello! I need scholarship application guidance and help.',
     github: 'https://github.com/techhub905',
     snapchat: 'https://snapchat.com/add/scholarship_portal',

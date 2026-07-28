@@ -281,6 +281,22 @@ export const ScholarshipDetail: React.FC = () => {
                 </a>
 
                 <a
+                  href={`https://wa.me/923463079238?text=${encodeURIComponent(`Hello Mir Ishfaq Ahmad! I need assistance applying for "${scholarship.title}" (${scholarship.country}).`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 px-4 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 font-bold text-xs rounded-2xl text-center transition-colors flex items-center justify-center gap-2 border border-emerald-500/30"
+                >
+                  <span>WhatsApp Inquiry & Help</span>
+                </a>
+
+                <a
+                  href={`mailto:techhub905@gmail.com?subject=${encodeURIComponent(`Application Inquiry: ${scholarship.title}`)}&body=${encodeURIComponent(`Hello,\n\nI want to apply for ${scholarship.title} in ${scholarship.country}.\n\nPlease guide me on the application procedure and document preparation.`)}`}
+                  className="w-full py-3 px-4 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 font-bold text-xs rounded-2xl text-center transition-colors flex items-center justify-center gap-2 border border-cyan-500/30"
+                >
+                  <span>Email Application Inquiry</span>
+                </a>
+
+                <a
                   href={scholarship.officialLink}
                   target="_blank"
                   rel="noopener noreferrer"

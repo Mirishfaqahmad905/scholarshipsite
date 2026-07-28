@@ -13,6 +13,8 @@ import { Scholarships } from './pages/Scholarships';
 import { ScholarshipDetail } from './pages/ScholarshipDetail';
 import { BlogPage } from './pages/Blog';
 import { BlogDetail } from './pages/BlogDetail';
+import { About } from './pages/About';
+import { Contact } from './pages/Contact';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 
@@ -39,6 +41,8 @@ export default function App() {
                 <Route path="/scholarships/:id" element={<ScholarshipDetail />} />
                 <Route path="/blog" element={<BlogPage />} />
                 <Route path="/blog/:id" element={<BlogDetail />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Login />} />
 

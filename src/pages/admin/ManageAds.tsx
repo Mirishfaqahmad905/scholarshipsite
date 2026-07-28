@@ -22,6 +22,8 @@ export const ManageAds: React.FC = () => {
     | 'scholarship-detail-top'
     | 'scholarship-detail-bottom'
     | 'blog-sidebar'
+    | 'about-page'
+    | 'contact-page'
   >('header');
   const [active, setActive] = useState<boolean>(true);
 
@@ -249,6 +251,8 @@ export const ManageAds: React.FC = () => {
                   <option value="scholarship-detail-top">Scholarship Detail Page Top</option>
                   <option value="scholarship-detail-bottom">Scholarship Detail Page Bottom</option>
                   <option value="blog-sidebar">Blog Directory & Article Sidebar</option>
+                  <option value="about-page">About Us Page Banner</option>
+                  <option value="contact-page">Contact Us Page Banner</option>
                 </select>
               </div>
 

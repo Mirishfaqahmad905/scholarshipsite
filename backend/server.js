@@ -11,6 +11,7 @@ import adRoutes from './routes/adRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import settingRoutes from './routes/settingRoutes.js';
 import subscriberRoutes from './routes/subscriberRoutes.js';
+import contactRoutes from './routes/contactRoutes.js';
 
 import upload from './middleware/uploadMiddleware.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
@@ -64,6 +65,7 @@ app.use('/api/ads', adRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/subscribers', subscriberRoutes);
+app.use('/api/contact', contactRoutes);
 
 // API Status & Health Check Endpoints
 app.get('/api', (req, res) => {

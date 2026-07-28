@@ -262,6 +262,8 @@ export const Footer: React.FC = () => {
             )}
             <Link to="/scholarships" className="hover:text-[#D4AF37] transition-colors">Directory</Link>
             <Link to="/blog" className="hover:text-[#D4AF37] transition-colors">Articles</Link>
+            <Link to="/about" className="hover:text-[#D4AF37] transition-colors">About Us</Link>
+            <Link to="/contact" className="hover:text-[#D4AF37] transition-colors">Contact Us</Link>
             <Link to="/login" className="hover:text-[#D4AF37] transition-colors">Admin Portal</Link>
           </div>
         </div>
