@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Search, Filter, RotateCcw, Globe, GraduationCap, Tag, DollarSign, CheckCircle2 } from 'lucide-react';
 import { Category, Country } from '../types';
+import { WORLD_COUNTRIES } from '../data/countries';
 
 interface FilterDropdownsProps {
   search: string;
@@ -34,22 +35,7 @@ export const FilterDropdowns: React.FC<FilterDropdownsProps> = ({
   setStatus,
   onReset,
 }) => {
-  const [countriesList, setCountriesList] = useState<string[]>([
-    'China',
-    'USA',
-    'Finland',
-    'UK',
-    'Canada',
-    'Germany',
-    'Australia',
-    'Japan',
-    'Netherlands',
-    'Sweden',
-    'Switzerland',
-    'Italy',
-    'France',
-    'South Korea',
-  ]);
+  const [countriesList, setCountriesList] = useState<string[]>(WORLD_COUNTRIES);
 
   const [categoriesList, setCategoriesList] = useState<string[]>([
     'Merit-based',
@@ -66,9 +52,7 @@ export const FilterDropdowns: React.FC<FilterDropdownsProps> = ({
         const { data } = await axios.get('/api/scholarships/meta/options');
         if (data.countries && data.countries.length > 0) {
           const names = data.countries.map((c: Country) => c.name);
-          // ensure China, USA, Finland, UK, Canada, Germany, Australia are included
-          const defaultList = ['China', 'USA', 'Finland', 'UK', 'Canada', 'Germany', 'Australia'];
-          const combined = Array.from(new Set([...defaultList, ...names]));
+          const combined = Array.from(new Set([...WORLD_COUNTRIES, ...names]));
           setCountriesList(combined.sort());
         }
         if (data.categories && data.categories.length > 0) {

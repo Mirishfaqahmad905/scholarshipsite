@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Scholarship } from '../../types';
 import { ImageUploader } from '../../components/ImageUploader';
 import { AdBanner } from '../../components/AdBanner';
+import { WORLD_COUNTRIES } from '../../data/countries';
 import {
   Plus,
   Pencil,
@@ -333,14 +334,19 @@ export const ManageScholarships: React.FC = () => {
 
                 <div>
                   <label className="block text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] mb-1">Country</label>
-                  <input
-                    type="text"
+                  <select
                     required
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
-                    placeholder="China, USA, Finland..."
                     className="w-full px-3 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
-                  />
+                  >
+                    <option value="" disabled>Select Host Country</option>
+                    {Array.from(new Set([country, ...WORLD_COUNTRIES])).filter(Boolean).map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
