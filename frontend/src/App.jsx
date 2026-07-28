@@ -21,6 +21,7 @@ import { ManageBlogs } from './pages/admin/ManageBlogs';
 import { ManageAds } from './pages/admin/ManageAds';
 import { ManageUsers } from './pages/admin/ManageUsers';
 import { ManageSettings } from './pages/admin/ManageSettings';
+import { ManageSubscribers } from './pages/admin/ManageSubscribers';
 
 export default function App() {
   return (

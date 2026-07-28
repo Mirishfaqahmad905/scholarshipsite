@@ -151,3 +151,5 @@ export const ManageSubscribers: React.FC = () => {
     </div>
   );
 };
+
+export default ManageSubscribers;

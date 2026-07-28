@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Subscriber, NotificationLog } from '../../types';
-import { Mail, Bell, CheckCircle2, Send, Users, Shield, Clock } from 'lucide-react';
+import { Mail, Bell, CheckCircle2, Send, Clock } from 'lucide-react';
 
-export const ManageSubscribers: React.FC = () => {
-  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
-  const [logs, setLogs] = useState<NotificationLog[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [broadcastMessage, setBroadcastMessage] = useState<string | null>(null);
+export const ManageSubscribers = () => {
+  const [subscribers, setSubscribers] = useState([]);
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [broadcastMessage, setBroadcastMessage] = useState(null);
 
   const fetchSubscribers = async () => {
     try {
@@ -99,7 +98,7 @@ export const ManageSubscribers: React.FC = () => {
                         </td>
                         <td className="px-5 py-4 text-slate-400 text-[11px]">
                           {sub.subscribedAt || sub.createdAt
-                            ? new Date(sub.subscribedAt || sub.createdAt!).toLocaleDateString()
+                            ? new Date(sub.subscribedAt || sub.createdAt).toLocaleDateString()
                             : 'Recent'}
                         </td>
                       </tr>
