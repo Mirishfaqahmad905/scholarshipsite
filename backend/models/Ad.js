@@ -16,16 +16,6 @@ const adSchema = new mongoose.Schema(
     },
     placement: {
       type: String,
-      enum: [
-        'header',
-        'sidebar',
-        'in-feed',
-        'footer',
-        'popup',
-        'scholarship-detail-top',
-        'scholarship-detail-bottom',
-        'blog-sidebar',
-      ],
       default: 'header',
     },
     active: {

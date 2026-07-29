@@ -12,8 +12,8 @@ export const NewUserSubscriberModal: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if the user is a returning visitor or already subscribed
-    const isRegistered = localStorage.getItem('scholarship_visitor_registered');
+    // Check if the user is a returning visitor or already subscribed in session
+    const isRegistered = sessionStorage.getItem('scholarship_visitor_registered');
     if (!isRegistered) {
       // Small delay (1.5 seconds) so user gets oriented on page first
       const timer = setTimeout(() => {
@@ -25,8 +25,8 @@ export const NewUserSubscriberModal: React.FC = () => {
 
   const handleClose = () => {
     setIsOpen(false);
-    // Mark as visited so returning user won't be bothered again
-    localStorage.setItem('scholarship_visitor_registered', 'true');
+    // Mark as visited in session state
+    sessionStorage.setItem('scholarship_visitor_registered', 'true');
   };
 
   const handleSubscribe = async (e: React.FormEvent) => {
@@ -42,8 +42,7 @@ export const NewUserSubscriberModal: React.FC = () => {
       const { data } = await axios.post('/api/subscribers', { email });
       setSuccess(true);
       setMessage(data.message || 'Subscription successful! You will receive email notifications when new scholarships are posted.');
-      localStorage.setItem('scholarship_subscribed_email', email);
-      localStorage.setItem('scholarship_visitor_registered', 'true');
+      sessionStorage.setItem('scholarship_visitor_registered', 'true');
 
       setTimeout(() => {
         setIsOpen(false);

@@ -12,7 +12,7 @@ export const NewUserSubscriberModal = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const isRegistered = localStorage.getItem('scholarship_visitor_registered');
+    const isRegistered = sessionStorage.getItem('scholarship_visitor_registered');
     if (!isRegistered) {
       const timer = setTimeout(() => {
         setIsOpen(true);
@@ -23,7 +23,7 @@ export const NewUserSubscriberModal = () => {
 
   const handleClose = () => {
     setIsOpen(false);
-    localStorage.setItem('scholarship_visitor_registered', 'true');
+    sessionStorage.setItem('scholarship_visitor_registered', 'true');
   };
 
   const handleSubscribe = async (e) => {
@@ -39,8 +39,7 @@ export const NewUserSubscriberModal = () => {
       const { data } = await axios.post('/api/subscribers', { email });
       setSuccess(true);
       setMessage(data.message || 'Subscription successful! You will receive email notifications when new scholarships are posted.');
-      localStorage.setItem('scholarship_subscribed_email', email);
-      localStorage.setItem('scholarship_visitor_registered', 'true');
+      sessionStorage.setItem('scholarship_visitor_registered', 'true');
 
       setTimeout(() => {
         setIsOpen(false);

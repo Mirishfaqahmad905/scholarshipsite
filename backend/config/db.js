@@ -90,8 +90,8 @@ const seedInitialData = async () => {
           targetLink: a.targetLink,
           placement: a.placement,
           active: a.active,
-          startDate: new Date(a.startDate),
-          endDate: new Date(a.endDate),
+          startDate: a.startDate ? new Date(a.startDate) : new Date(),
+          endDate: a.endDate ? new Date(a.endDate) : null,
         });
       }
     }
