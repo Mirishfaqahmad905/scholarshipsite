@@ -21,6 +21,9 @@ import {
   MessageSquare,
   Video,
   Bookmark,
+  Code,
+  DollarSign,
+  Zap,
 } from 'lucide-react';
 
 export const ManageSettings: React.FC = () => {
@@ -39,6 +42,9 @@ export const ManageSettings: React.FC = () => {
   const [twitter, setTwitter] = useState('');
   const [linkedin, setLinkedin] = useState('');
   const [youtube, setYoutube] = useState('');
+  const [googleAdSensePublisherId, setGoogleAdSensePublisherId] = useState('');
+  const [googleAutoAdsEnabled, setGoogleAutoAdsEnabled] = useState(true);
+  const [headerAdScript, setHeaderAdScript] = useState('');
   const [customLinks, setCustomLinks] = useState<CustomSocialLink[]>([]);
 
   const [saving, setSaving] = useState(false);
@@ -60,6 +66,9 @@ export const ManageSettings: React.FC = () => {
       setTwitter(settings.twitter || '');
       setLinkedin(settings.linkedin || '');
       setYoutube(settings.youtube || '');
+      setGoogleAdSensePublisherId(settings.googleAdSensePublisherId || '');
+      setGoogleAutoAdsEnabled(settings.googleAutoAdsEnabled !== false);
+      setHeaderAdScript(settings.headerAdScript || '');
       setCustomLinks(settings.customLinks || []);
     }
   }, [settings]);
@@ -102,6 +111,9 @@ export const ManageSettings: React.FC = () => {
         twitter,
         linkedin,
         youtube,
+        googleAdSensePublisherId,
+        googleAutoAdsEnabled,
+        headerAdScript,
         customLinks: customLinks.filter((l) => l.platformName.trim() && l.url.trim()),
       });
 
@@ -395,7 +407,67 @@ export const ManageSettings: React.FC = () => {
             </div>
           </div>
 
-          {/* Section 4: Dynamic Custom Social Channels */}
+          {/* Section 4: Google AdSense & Auto-Ads Script Injection */}
+          <div className="bg-slate-900/60 border border-slate-800/80 p-6 rounded-3xl backdrop-blur-md space-y-4">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[#D4AF37] flex items-center gap-2 border-b border-slate-800/80 pb-3">
+              <DollarSign className="w-4 h-4 text-[#D4AF37]" />
+              Google AdSense Auto-Ads & Custom Head Script Code
+            </h3>
+
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Google AdSense allows Google to automatically place high-revenue ads across all optimal layouts of your website. Provide your Publisher Client ID or paste your full AdSense JavaScript snippet below.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
+                  <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
+                  Google AdSense Publisher ID (client ID)
+                </label>
+                <input
+                  type="text"
+                  value={googleAdSensePublisherId}
+                  onChange={(e) => setGoogleAdSensePublisherId(e.target.value)}
+                  placeholder="ca-pub-1234567890123456"
+                  className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-400"
+                />
+                <span className="text-[10px] text-slate-500 mt-1 block">Found in Google AdSense Account &gt; Settings &gt; Account Information</span>
+              </div>
+
+              <div className="flex flex-col justify-center">
+                <label className="block text-xs font-semibold text-slate-300 mb-2">
+                  Auto-Ads Auto Placement
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                  <input
+                    type="checkbox"
+                    checked={googleAutoAdsEnabled}
+                    onChange={(e) => setGoogleAutoAdsEnabled(e.target.checked)}
+                    className="w-4 h-4 accent-[#D4AF37] rounded"
+                  />
+                  <span className="text-xs text-slate-200 font-semibold">Enable Google Auto-Ads Engine</span>
+                </label>
+                <span className="text-[10px] text-slate-500 mt-1 block">Google automatically detects and inserts banner &amp; anchor ads on high-performing pages</span>
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
+                <Code className="w-3.5 h-3.5 text-cyan-400" />
+                Custom Ad Script Code / Head HTML Tag Injection
+              </label>
+              <textarea
+                rows={4}
+                value={headerAdScript}
+                onChange={(e) => setHeaderAdScript(e.target.value)}
+                placeholder={'<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1234567890123456" crossorigin="anonymous"></script>'}
+                className="w-full px-4 py-3 bg-slate-950/90 border border-slate-800 rounded-xl text-xs font-mono text-cyan-300 focus:outline-none focus:border-cyan-400"
+              />
+              <span className="text-[10px] text-slate-500 mt-1 block">Paste any custom AdSense code snippet, Google Tag Manager script, or ad verification code here.</span>
+            </div>
+          </div>
+
+          {/* Section 5: Dynamic Custom Social Channels */}
           <div className="bg-slate-900/60 border border-slate-800/80 p-6 rounded-3xl backdrop-blur-md space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
               <h3 className="text-sm font-bold uppercase tracking-wider text-[#D4AF37] flex items-center gap-2">

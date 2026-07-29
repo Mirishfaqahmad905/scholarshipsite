@@ -12,6 +12,7 @@ import userRoutes from './routes/userRoutes.js';
 import settingRoutes from './routes/settingRoutes.js';
 import subscriberRoutes from './routes/subscriberRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
+import seoRoutes from './routes/seoRoutes.js';
 
 import upload from './middleware/uploadMiddleware.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
@@ -66,6 +67,18 @@ app.use('/api/users', userRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/subscribers', subscriberRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/seo', seoRoutes);
+
+// Direct SEO Public Endpoints
+app.get('/robots.txt', (req, res, next) => {
+  req.url = '/robots.txt';
+  return seoRoutes(req, res, next);
+});
+
+app.get('/sitemap.xml', (req, res, next) => {
+  req.url = '/sitemap.xml';
+  return seoRoutes(req, res, next);
+});
 
 // API Status & Health Check Endpoints
 app.get('/api', (req, res) => {

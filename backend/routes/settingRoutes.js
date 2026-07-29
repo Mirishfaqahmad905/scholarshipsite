@@ -31,6 +31,9 @@ router.get('/', async (req, res) => {
           twitter: 'https://x.com',
           linkedin: 'https://linkedin.com',
           youtube: 'https://youtube.com',
+          googleAdSensePublisherId: '',
+          googleAutoAdsEnabled: true,
+          headerAdScript: '',
           customLinks: [],
         });
       }
@@ -57,6 +60,9 @@ router.get('/', async (req, res) => {
       twitter: 'https://x.com',
       linkedin: 'https://linkedin.com',
       youtube: 'https://youtube.com',
+      googleAdSensePublisherId: '',
+      googleAutoAdsEnabled: true,
+      headerAdScript: '',
       customLinks: [],
       updatedAt: new Date(),
     };
@@ -82,6 +88,9 @@ router.put('/', protect, admin, async (req, res) => {
     twitter,
     linkedin,
     youtube,
+    googleAdSensePublisherId,
+    googleAutoAdsEnabled,
+    headerAdScript,
     customLinks,
   } = req.body;
 
@@ -99,6 +108,9 @@ router.put('/', protect, admin, async (req, res) => {
     twitter: twitter || '',
     linkedin: linkedin || '',
     youtube: youtube || '',
+    googleAdSensePublisherId: googleAdSensePublisherId !== undefined ? googleAdSensePublisherId : '',
+    googleAutoAdsEnabled: googleAutoAdsEnabled !== undefined ? Boolean(googleAutoAdsEnabled) : true,
+    headerAdScript: headerAdScript !== undefined ? headerAdScript : '',
     customLinks: Array.isArray(customLinks) ? customLinks : [],
     updatedAt: new Date(),
   };

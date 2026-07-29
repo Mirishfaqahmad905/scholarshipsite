@@ -57,7 +57,8 @@ export interface Ad {
     | 'scholarship-detail-bottom'
     | 'blog-sidebar'
     | 'about-page'
-    | 'contact-page';
+    | 'contact-page'
+    | 'contact-services';
   active: boolean;
   startDate?: string;
   endDate?: string;
@@ -122,7 +123,31 @@ export interface SiteSettings {
   twitter: string;
   linkedin: string;
   youtube: string;
+  googleAdSensePublisherId?: string;
+  googleAutoAdsEnabled?: boolean;
+  headerAdScript?: string;
   customLinks: CustomSocialLink[];
+  updatedAt?: string;
+}
+
+export interface SEOConfig {
+  _id?: string;
+  metaTitle: string;
+  metaDescription: string;
+  metaKeywords: string;
+  author: string;
+  canonicalUrl: string;
+  ogTitle: string;
+  ogDescription: string;
+  ogImage: string;
+  twitterCard: string;
+  twitterSite: string;
+  googleSiteVerification?: string;
+  bingSiteVerification?: string;
+  structuredDataJson?: string;
+  robotsTxtContent?: string;
+  sitemapAutoGenerate?: boolean;
+  noIndexRoutes?: string[];
   updatedAt?: string;
 }
 

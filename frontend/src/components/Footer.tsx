@@ -262,9 +262,9 @@ export const Footer: React.FC = () => {
             )}
             <Link to="/scholarships" className="hover:text-[#D4AF37] transition-colors">Directory</Link>
             <Link to="/blog" className="hover:text-[#D4AF37] transition-colors">Articles</Link>
-            <Link to="/about" className="hover:text-[#D4AF37] transition-colors">About Us</Link>
-            <Link to="/contact" className="hover:text-[#D4AF37] transition-colors">Contact Us</Link>
-            <Link to="/login" className="hover:text-[#D4AF37] transition-colors">Admin Portal</Link>
+            <Link to="/about" className="hover:text-[#D4AF37] transition-colors">About</Link>
+            <Link to="/contact" className="hover:text-[#D4AF37] transition-colors">Contact</Link>
+            <Link to="/login" className="text-slate-700 hover:text-slate-400 transition-colors text-[10px] ml-4 cursor-pointer select-none" title="Portal Sign In">Login</Link>
           </div>
         </div>
       </div>

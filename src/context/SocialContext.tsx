@@ -23,6 +23,9 @@ const defaultSettings: SiteSettings = {
   twitter: 'https://x.com',
   linkedin: 'https://linkedin.com',
   youtube: 'https://youtube.com',
+  googleAdSensePublisherId: '',
+  googleAutoAdsEnabled: true,
+  headerAdScript: '',
   customLinks: [],
 };
 

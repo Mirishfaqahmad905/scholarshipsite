@@ -15,6 +15,7 @@ import {
   ShieldAlert,
   Share2,
   Mail,
+  Search,
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
@@ -45,6 +46,7 @@ export const AdminDashboard: React.FC = () => {
     { label: 'Blog Articles', path: '/admin/blogs', icon: BookOpen },
     { label: 'Ad Banners', path: '/admin/ads', icon: Megaphone },
     { label: 'Subscribers & Alerts', path: '/admin/subscribers', icon: Mail },
+    { label: 'SEO Optimization', path: '/admin/seo', icon: Search },
     { label: 'Social & Links', path: '/admin/settings', icon: Share2 },
     { label: 'Users & Roles', path: '/admin/users', icon: Users },
   ];

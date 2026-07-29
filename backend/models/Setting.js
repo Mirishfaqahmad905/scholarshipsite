@@ -15,6 +15,9 @@ const settingSchema = new mongoose.Schema(
     twitter: { type: String, default: 'https://x.com' },
     linkedin: { type: String, default: 'https://linkedin.com' },
     youtube: { type: String, default: 'https://youtube.com' },
+    googleAdSensePublisherId: { type: String, default: '' },
+    googleAutoAdsEnabled: { type: Boolean, default: true },
+    headerAdScript: { type: String, default: '' },
     customLinks: [
       {
         platformName: { type: String, required: true },

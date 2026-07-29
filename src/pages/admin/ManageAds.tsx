@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { Ad } from '../../types';
+import { useSocial } from '../../context/SocialContext';
 import { ImageUploader } from '../../components/ImageUploader';
-import { Plus, Pencil, Trash2, X, AlertCircle, Megaphone, CheckCircle2, XCircle } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, AlertCircle, Megaphone, CheckCircle2, XCircle, Code, DollarSign, ExternalLink } from 'lucide-react';
 
 export const ManageAds: React.FC = () => {
+  const { settings } = useSocial();
   const [ads, setAds] = useState<Ad[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -24,6 +27,7 @@ export const ManageAds: React.FC = () => {
     | 'blog-sidebar'
     | 'about-page'
     | 'contact-page'
+    | 'contact-services'
   >('header');
   const [active, setActive] = useState<boolean>(true);
 
@@ -117,12 +121,72 @@ export const ManageAds: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Google AdSense Integration Overview Card */}
+      <div className="bg-slate-900/60 border border-slate-800/80 p-6 rounded-3xl backdrop-blur-md space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-400">
+              <DollarSign className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-serif font-semibold text-white flex items-center gap-2">
+                Google AdSense Auto-Ads Engine
+                {settings?.googleAdSensePublisherId ? (
+                  <span className="px-2.5 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase rounded-lg flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" /> Configured
+                  </span>
+                ) : (
+                  <span className="px-2.5 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-bold uppercase rounded-lg">
+                    Not Configured
+                  </span>
+                )}
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Google automatically places responsive ads across optimal locations of your portal
+              </p>
+            </div>
+          </div>
+
+          <Link
+            to="/admin/settings"
+            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-[#D4AF37] border border-[#D4AF37]/40 text-xs font-bold uppercase tracking-wider rounded-xl transition-all flex items-center gap-1.5 shrink-0"
+          >
+            <Code className="w-3.5 h-3.5" />
+            <span>Configure AdSense / Scripts</span>
+            <ExternalLink className="w-3 h-3" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div className="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800/80 space-y-1">
+            <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Publisher ID</span>
+            <div className="font-mono text-emerald-300 truncate">
+              {settings?.googleAdSensePublisherId || 'Not set (Add in Settings)'}
+            </div>
+          </div>
+
+          <div className="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800/80 space-y-1">
+            <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Auto-Ads Status</span>
+            <div className="font-semibold text-slate-200">
+              {settings?.googleAutoAdsEnabled !== false ? '✅ Active (Auto placement)' : '❌ Disabled'}
+            </div>
+          </div>
+
+          <div className="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800/80 space-y-1">
+            <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Custom Header Script</span>
+            <div className="font-mono text-cyan-300 truncate">
+              {settings?.headerAdScript ? 'Script Loaded' : 'None specified'}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-serif font-semibold text-white">
-            Manage Ad Banners <span className="text-[#D4AF37] italic font-normal">({ads.length})</span>
+            Custom Graphic Banner Ads <span className="text-[#D4AF37] italic font-normal">({ads.length})</span>
           </h2>
-          <p className="text-xs text-slate-400 font-sans mt-0.5">Manage header, sidebar, and in-feed sponsored ads</p>
+          <p className="text-xs text-slate-400 font-sans mt-0.5">Manage header, sidebar, footer, contact services, and in-feed sponsored banners</p>
         </div>
         <button
           onClick={openCreateModal}
@@ -251,8 +315,9 @@ export const ManageAds: React.FC = () => {
                   <option value="scholarship-detail-top">Scholarship Detail Page Top</option>
                   <option value="scholarship-detail-bottom">Scholarship Detail Page Bottom</option>
                   <option value="blog-sidebar">Blog Directory & Article Sidebar</option>
-                  <option value="about-page">About Us Page Banner</option>
-                  <option value="contact-page">Contact Us Page Banner</option>
+                  <option value="about-page">About Page Banner</option>
+                  <option value="contact-page">Contact Page Sidebar Banner</option>
+                  <option value="contact-services">Contact Services Section Banner</option>
                 </select>
               </div>
 

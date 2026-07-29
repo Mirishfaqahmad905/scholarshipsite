@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { ThemeToggle } from './ThemeToggle';
 import { GraduationCap, LayoutDashboard, LogOut, Menu, X, User as UserIcon, BookOpen, Compass, Sparkles } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -65,7 +66,7 @@ export const Navbar: React.FC = () => {
                 isActive('/about') ? 'bg-slate-800/80 text-[#D4AF37] font-bold border border-slate-700/60' : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
               }`}
             >
-              About Us
+              About
             </Link>
             <Link
               to="/contact"
@@ -73,7 +74,7 @@ export const Navbar: React.FC = () => {
                 isActive('/contact') ? 'bg-slate-800/80 text-[#D4AF37] font-bold border border-slate-700/60' : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
               }`}
             >
-              Contact Us
+              Contact
             </Link>
 
             {isAdmin && (
@@ -89,6 +90,7 @@ export const Navbar: React.FC = () => {
 
           {/* Right Action Menu */}
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             {user ? (
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-700/80 shadow-sm">
@@ -117,14 +119,15 @@ export const Navbar: React.FC = () => {
                   className="px-5 py-2 text-xs uppercase tracking-wider font-bold bg-[#D4AF37] hover:bg-[#e0bc46] text-slate-950 rounded-lg shadow-sm transition-all duration-200 flex items-center gap-1.5"
                 >
                   <LayoutDashboard className="w-3.5 h-3.5" />
-                  Admin Login
+                  Login
                 </Link>
               </div>
             )}
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center gap-2">
+            <ThemeToggle />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 text-slate-400 hover:text-white rounded-lg focus:outline-none"
@@ -164,14 +167,14 @@ export const Navbar: React.FC = () => {
             onClick={() => setMobileMenuOpen(false)}
             className="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800"
           >
-            About Us
+            About
           </Link>
           <Link
             to="/contact"
             onClick={() => setMobileMenuOpen(false)}
             className="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800"
           >
-            Contact Us
+            Contact
           </Link>
 
           {isAdmin && (
@@ -205,7 +208,7 @@ export const Navbar: React.FC = () => {
                   onClick={() => setMobileMenuOpen(false)}
                   className="block text-center px-4 py-2.5 text-sm font-bold text-slate-950 bg-[#D4AF37] rounded-xl shadow"
                 >
-                  Admin Login
+                  Login
                 </Link>
               </div>
             )}
