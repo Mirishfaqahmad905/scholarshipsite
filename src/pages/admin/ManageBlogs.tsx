@@ -97,7 +97,6 @@ export const ManageBlogs: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Delete this blog post?')) return;
     try {
       setBlogs((prev) => prev.filter((b) => b._id !== id));
       await axios.delete(`/api/blogs/${id}`);

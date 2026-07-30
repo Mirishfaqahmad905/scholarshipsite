@@ -19,6 +19,9 @@ import {
   CheckCircle2,
   ListOrdered,
   Coins,
+  AlertTriangle,
+  Loader2,
+  Sparkles,
 } from 'lucide-react';
 
 export const ManageScholarships: React.FC = () => {
@@ -26,6 +29,23 @@ export const ManageScholarships: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  // Custom Delete Modal State (replaces native window.confirm)
+  const [deletingItem, setDeletingItem] = useState<{ id: string; title: string } | null>(null);
+  const [deleting, setDeleting] = useState<boolean>(false);
+
+  // Notification Toast Pop-up State
+  const [toast, setToast] = useState<{
+    type: 'success' | 'error' | 'info';
+    message: string;
+  } | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, 4500);
+  };
 
   // Form fields
   const [title, setTitle] = useState('');
@@ -99,7 +119,7 @@ export const ManageScholarships: React.FC = () => {
     setEligibilityCriteria(sch.eligibilityCriteria || 'Standard international student criteria.');
     setRequiredDocuments(sch.requiredDocuments || 'Passport, Transcripts, Study Plan, Recommendation Letters.');
     setApplicationFee(sch.applicationFee || 'Free / No Application Fee');
-    setDeadline(new Date(sch.deadline).toISOString().slice(0, 10));
+    setDeadline(sch.deadline ? new Date(sch.deadline).toISOString().slice(0, 10) : '');
     setOfficialLink(sch.officialLink);
     setApplyLink(sch.applyLink || sch.officialLink);
     setImage(sch.image || '/uploads/default-scholarship.jpg');
@@ -140,8 +160,10 @@ export const ManageScholarships: React.FC = () => {
 
       if (editingId) {
         await axios.put(`/api/scholarships/${editingId}`, payload);
+        showToast(`Scholarship "${title}" updated successfully!`, 'success');
       } else {
         await axios.post('/api/scholarships', payload);
+        showToast(`New scholarship "${title}" added successfully!`, 'success');
       }
 
       setShowModal(false);
@@ -154,27 +176,68 @@ export const ManageScholarships: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this scholarship?')) return;
+  const openDeleteModal = (sch: Scholarship) => {
+    setDeletingItem({ id: sch._id, title: sch.title });
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingItem) return;
     try {
-      setScholarships((prev) => prev.filter((s) => s._id !== id));
-      await axios.delete(`/api/scholarships/${id}`);
+      setDeleting(true);
+      // Optimistic filter
+      setScholarships((prev) => prev.filter((s) => s._id !== deletingItem.id));
+      await axios.delete(`/api/scholarships/${deletingItem.id}`);
+      showToast(`Scholarship "${deletingItem.title}" permanently deleted from database!`, 'success');
+      setDeletingItem(null);
       fetchScholarships();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Delete error', err);
+      showToast('Failed to delete scholarship from database.', 'error');
       fetchScholarships();
+    } finally {
+      setDeleting(false);
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {/* Toast Notification Pop-up */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 animate-bounce duration-300">
+          <div
+            className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl border backdrop-blur-xl ${
+              toast.type === 'success'
+                ? 'bg-emerald-950/90 border-emerald-500/50 text-emerald-200'
+                : toast.type === 'error'
+                ? 'bg-rose-950/90 border-rose-500/50 text-rose-200'
+                : 'bg-slate-900/90 border-[#D4AF37]/50 text-amber-200'
+            }`}
+          >
+            {toast.type === 'success' ? (
+              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+            ) : toast.type === 'error' ? (
+              <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+            ) : (
+              <Sparkles className="w-5 h-5 text-[#D4AF37] shrink-0" />
+            )}
+            <p className="text-xs font-semibold">{toast.message}</p>
+            <button
+              onClick={() => setToast(null)}
+              className="ml-2 text-slate-400 hover:text-white transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Action Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-serif font-semibold text-white">
             Manage Scholarships <span className="text-[#D4AF37] italic font-normal">({scholarships.length})</span>
           </h2>
-          <p className="text-xs text-slate-400 font-sans mt-0.5">Add, update, or remove funding listings</p>
+          <p className="text-xs text-slate-400 font-sans mt-0.5">Add, update, or remove funding listings in MongoDB database</p>
         </div>
         <button
           onClick={openCreateModal}
@@ -231,7 +294,7 @@ export const ManageScholarships: React.FC = () => {
                     </td>
                     <td className="p-4">{sch.country}</td>
                     <td className="p-4 text-slate-400">
-                      {new Date(sch.deadline).toLocaleDateString()}
+                      {sch.deadline ? new Date(sch.deadline).toLocaleDateString() : 'N/A'}
                     </td>
                     <td className="p-4">
                       <span className={`px-2 py-0.5 rounded-lg font-bold text-[10px] ${sch.fundingType === 'Full' ? 'text-emerald-400 bg-emerald-500/10' : 'text-slate-300 bg-slate-800'}`}>
@@ -252,7 +315,7 @@ export const ManageScholarships: React.FC = () => {
                         <Pencil className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(sch._id)}
+                        onClick={() => openDeleteModal(sch)}
                         className="p-1.5 text-slate-300 hover:text-rose-400 hover:bg-slate-800/80 rounded-xl transition-colors"
                         title="Delete"
                       >
@@ -267,7 +330,57 @@ export const ManageScholarships: React.FC = () => {
         </div>
       )}
 
-      {/* Modal */}
+      {/* Delete Confirmation Modal (Replaces iframe-blocked window.confirm) */}
+      {deletingItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 text-rose-400">
+              <div className="p-3 bg-rose-500/10 rounded-2xl border border-rose-500/20">
+                <AlertTriangle className="w-6 h-6 text-rose-500" />
+              </div>
+              <div>
+                <h3 className="text-base font-serif font-bold text-white">Delete Scholarship Listing?</h3>
+                <p className="text-[11px] text-slate-400">Confirm permanent deletion from database</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800">
+              Are you sure you want to delete <strong className="text-white">"{deletingItem.title}"</strong>? This will permanently remove the scholarship record from the MongoDB database.
+            </p>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={() => setDeletingItem(null)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={confirmDelete}
+                className="px-5 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl shadow transition-colors flex items-center gap-2"
+              >
+                {deleting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    <span>Yes, Delete</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add / Edit Scholarship Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-5 shadow-2xl my-8">
@@ -495,9 +608,10 @@ export const ManageScholarships: React.FC = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-5 py-2 bg-[#D4AF37] hover:bg-[#e0bc46] text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl shadow"
+                  className="px-5 py-2 bg-[#D4AF37] hover:bg-[#e0bc46] text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl shadow flex items-center gap-2"
                 >
-                  {submitting ? 'Saving...' : editingId ? 'Update Listing' : 'Add Scholarship'}
+                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                  <span>{submitting ? 'Saving...' : editingId ? 'Update Listing' : 'Add Scholarship'}</span>
                 </button>
               </div>
             </form>

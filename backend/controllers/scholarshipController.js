@@ -218,14 +218,20 @@ export const updateScholarship = async (req, res) => {
   }
 
   try {
+    let scholarship = null;
     if (mongoose.Types.ObjectId.isValid(id)) {
-      const scholarship = await Scholarship.findById(id);
-      if (scholarship) {
-        Object.assign(scholarship, req.body);
-        const updated = await scholarship.save();
-        return res.json(updated);
-      }
+      scholarship = await Scholarship.findById(id);
     }
+    if (!scholarship) {
+      scholarship = await Scholarship.findOne({ _id: id });
+    }
+
+    if (scholarship) {
+      Object.assign(scholarship, req.body);
+      const updated = await scholarship.save();
+      return res.json(updated);
+    }
+
     if (index !== -1) return res.json(store.scholarships[index]);
     return res.status(404).json({ message: 'Scholarship not found' });
   } catch (error) {
@@ -256,6 +262,7 @@ export const deleteScholarship = async (req, res) => {
     if (mongoose.Types.ObjectId.isValid(id)) {
       await Scholarship.findByIdAndDelete(id);
     }
+    await Scholarship.deleteOne({ _id: id });
     return res.json({ message: 'Scholarship deleted successfully' });
   } catch (error) {
     return res.json({ message: 'Scholarship deleted successfully' });

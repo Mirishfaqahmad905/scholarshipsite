@@ -7,6 +7,30 @@ import Blog from '../models/Blog.js';
 import Ad from '../models/Ad.js';
 import { inMemoryStore } from './inMemoryStore.js';
 
+let lastDbError = null;
+
+export const getDbStatus = async () => {
+  const readyState = mongoose.connection.readyState;
+  const isConnected = readyState === 1;
+  let count = 0;
+  if (isConnected) {
+    try {
+      count = await Scholarship.countDocuments();
+    } catch (e) {
+      // count failed
+    }
+  }
+  return {
+    connected: isConnected,
+    readyState,
+    statusText: isConnected ? 'Connected to MongoDB' : 'Disconnected / Fallback Mode',
+    host: isConnected ? mongoose.connection.host : null,
+    dbName: isConnected ? mongoose.connection.name : null,
+    error: lastDbError,
+    scholarshipCount: count,
+  };
+};
+
 const seedInitialData = async () => {
   try {
     const userCount = await User.countDocuments();
@@ -61,6 +85,7 @@ const seedInitialData = async () => {
           image: s.image,
         });
       }
+      console.log(`✅ Successfully seeded ${inMemoryStore.scholarships.length} scholarships to MongoDB.`);
     }
 
     const blogCount = await Blog.countDocuments();
@@ -97,6 +122,7 @@ const seedInitialData = async () => {
     }
   } catch (err) {
     console.warn('⚠️ Auto-seeding notice:', err.message);
+    lastDbError = `Seeding error: ${err.message}`;
   }
 };
 
@@ -116,12 +142,15 @@ const connectDB = async () => {
       serverSelectionTimeoutMS: 5000,
     });
     console.log(`✅ MongoDB Connected successfully to host: ${conn.connection.host}`);
+    lastDbError = null;
     await seedInitialData();
     return conn;
   } catch (error) {
-    console.warn(`⚠️ MongoDB connection notice: ${error.message}. Fallback in-memory database store active.`);
+    lastDbError = error.message;
+    console.warn(`⚠️ MongoDB connection error: ${error.message}. Fallback in-memory store active.`);
     return null;
   }
 };
 
 export default connectDB;
+

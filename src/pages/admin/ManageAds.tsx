@@ -108,7 +108,6 @@ export const ManageAds: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Delete this ad banner?')) return;
     try {
       setAds((prev) => prev.filter((a) => a._id !== id));
       await axios.delete(`/api/ads/${id}`);

@@ -45,7 +45,6 @@ export const ManageUsers: React.FC = () => {
   };
 
   const handleDeleteUser = async (id: string) => {
-    if (!window.confirm('Delete this user account?')) return;
     try {
       setUsers((prev) => prev.filter((u) => u._id !== id));
       await axios.delete(`/api/users/${id}`);

@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import path from 'path';
-import connectDB from './config/db.js';
+import connectDB, { getDbStatus } from './config/db.js';
 
 import authRoutes from './routes/authRoutes.js';
 import scholarshipRoutes from './routes/scholarshipRoutes.js';
@@ -81,12 +81,19 @@ app.get('/sitemap.xml', (req, res, next) => {
 });
 
 // API Status & Health Check Endpoints
-app.get('/api', (req, res) => {
-  res.json({ message: 'Scholarship Portal API is active and running', status: 'ok' });
+app.get('/api', async (req, res) => {
+  const dbStatus = await getDbStatus();
+  res.json({ message: 'Scholarship Portal API is active and running', status: 'ok', database: dbStatus });
 });
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', service: 'Scholarship Portal API' });
+app.get('/api/health', async (req, res) => {
+  const dbStatus = await getDbStatus();
+  res.json({ status: 'ok', service: 'Scholarship Portal API', database: dbStatus });
+});
+
+app.get('/api/db-status', async (req, res) => {
+  const dbStatus = await getDbStatus();
+  res.json(dbStatus);
 });
 
 if (process.env.RUN_STANDALONE === 'true') {
@@ -97,3 +104,4 @@ if (process.env.RUN_STANDALONE === 'true') {
 }
 
 export default app;
+
