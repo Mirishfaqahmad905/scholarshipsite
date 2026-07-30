@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 import { DashboardStats } from '../../types';
 import {
   LayoutDashboard,
@@ -19,11 +20,15 @@ import {
   Mail,
   Search,
   Database,
+  LogOut,
+  ExternalLink,
+  User as UserIcon,
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -42,6 +47,11 @@ export const AdminDashboard: React.FC = () => {
   useEffect(() => {
     fetchStats();
   }, [location.pathname]);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const navItems = [
     { label: 'Overview', path: '/admin', icon: LayoutDashboard },
@@ -62,21 +72,29 @@ export const AdminDashboard: React.FC = () => {
     <div className="min-h-screen bg-[#0b1120] text-slate-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Top Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-900/60 border border-slate-800/80 p-6 sm:p-8 rounded-3xl shadow-2xl backdrop-blur-md">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 bg-slate-900/60 border border-slate-800/80 p-6 sm:p-8 rounded-3xl shadow-2xl backdrop-blur-md">
           <div>
             <div className="flex items-center gap-2 text-[#D4AF37] font-bold text-xs uppercase tracking-[0.2em] mb-1">
               <ShieldAlert className="w-4 h-4 text-[#D4AF37]" />
-              <span>Admin Control Center</span>
+              <span>Dedicated Admin Workspace</span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-serif font-semibold text-white">
               Scholarship Portal <span className="italic font-normal text-[#D4AF37]">Management</span>
             </h1>
             <p className="text-xs text-slate-400 mt-2 font-sans">
-              Create, edit, and organize scholarship listings, blog articles, ad banners, and user accounts.
+              Logged in as <strong className="text-slate-200">{user?.name || 'Admin User'}</strong> ({user?.email || 'admin@scholarships.com'})
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/"
+              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-bold text-xs uppercase tracking-wider rounded-2xl transition-all border border-slate-700/80 flex items-center gap-2"
+            >
+              <ExternalLink className="w-4 h-4 text-cyan-400" />
+              <span>View Website</span>
+            </Link>
+
             <Link
               to="/admin/scholarships"
               className="px-5 py-2.5 bg-[#D4AF37] hover:bg-[#e0bc46] text-slate-950 font-bold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-md flex items-center gap-2"
@@ -84,29 +102,47 @@ export const AdminDashboard: React.FC = () => {
               <PlusCircle className="w-4 h-4" />
               <span>New Scholarship</span>
             </Link>
+
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2.5 bg-rose-950/80 hover:bg-rose-900 border border-rose-800/80 text-rose-200 hover:text-white font-bold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-md flex items-center gap-2"
+            >
+              <LogOut className="w-4 h-4 text-rose-400" />
+              <span>Logout</span>
+            </button>
           </div>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex flex-wrap gap-2 border-b border-slate-800/80 pb-3">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const active = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
-                  active
-                    ? 'bg-[#D4AF37] text-slate-950 shadow-md'
-                    : 'bg-slate-900/60 text-slate-300 hover:bg-slate-800/80 hover:text-white border border-slate-800/80'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+          <div className="flex flex-wrap gap-2">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
+                    active
+                      ? 'bg-[#D4AF37] text-slate-950 shadow-md'
+                      : 'bg-slate-900/60 text-slate-300 hover:bg-slate-800/80 hover:text-white border border-slate-800/80'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2.5 bg-rose-950/50 hover:bg-rose-900/80 text-rose-300 hover:text-white border border-rose-800/40 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ml-auto"
+          >
+            <LogOut className="w-4 h-4 text-rose-400" />
+            <span>Logout Admin</span>
+          </button>
         </div>
 
         {/* If SubRoute, render Outlet (e.g., ManageScholarships), otherwise show Overview */}

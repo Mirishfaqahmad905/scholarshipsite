@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { SocialProvider } from './context/SocialContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -32,6 +32,56 @@ import { ManageSettings } from './pages/admin/ManageSettings';
 import { ManageSubscribers } from './pages/admin/ManageSubscribers';
 import { ManageSEO } from './pages/admin/ManageSEO';
 
+function AppContent() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  return (
+    <div className="flex flex-col min-h-screen bg-slate-950 font-sans text-slate-100 antialiased selection:bg-amber-500 selection:text-slate-950 transition-colors duration-300">
+      {!isAdminRoute && <Navbar />}
+      <main className="flex-grow">
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/scholarships" element={<Scholarships />} />
+          <Route path="/scholarships/:id" element={<ScholarshipDetail />} />
+          <Route path="/internships" element={<Internships />} />
+          <Route path="/fellowships" element={<Fellowships />} />
+          <Route path="/seminars" element={<Seminars />} />
+          <Route path="/opportunity/:id" element={<ScholarshipDetail />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:id" element={<BlogDetail />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Login />} />
+
+          {/* Protected Admin Routes */}
+          <Route element={<PrivateRoute adminOnly={true} />}>
+            <Route path="/admin" element={<AdminDashboard />}>
+              <Route path="scholarships" element={<ManageScholarships />} />
+              <Route path="internships" element={<ManageInternships />} />
+              <Route path="fellowships" element={<ManageFellowships />} />
+              <Route path="blogs" element={<ManageBlogs />} />
+              <Route path="ads" element={<ManageAds />} />
+              <Route path="subscribers" element={<ManageSubscribers />} />
+              <Route path="seo" element={<ManageSEO />} />
+              <Route path="users" element={<ManageUsers />} />
+              <Route path="settings" element={<ManageSettings />} />
+            </Route>
+          </Route>
+
+          {/* Fallback Catch-all Route */}
+          <Route path="*" element={<Home />} />
+        </Routes>
+      </main>
+      {!isAdminRoute && <Footer />}
+      {!isAdminRoute && <SocialFloatingWidget />}
+      {!isAdminRoute && <NewUserSubscriberModal />}
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <ThemeProvider>
@@ -40,52 +90,11 @@ export default function App() {
           <SEOProvider>
             <GoogleAdScriptLoader />
             <BrowserRouter>
-              <div className="flex flex-col min-h-screen bg-slate-950 font-sans text-slate-100 antialiased selection:bg-amber-500 selection:text-slate-950 transition-colors duration-300">
-                <Navbar />
-                <main className="flex-grow">
-                  <Routes>
-                  {/* Public Routes */}
-                  <Route path="/" element={<Home />} />
-                  <Route path="/scholarships" element={<Scholarships />} />
-                  <Route path="/scholarships/:id" element={<ScholarshipDetail />} />
-                  <Route path="/internships" element={<Internships />} />
-                  <Route path="/fellowships" element={<Fellowships />} />
-                  <Route path="/seminars" element={<Seminars />} />
-                  <Route path="/opportunity/:id" element={<ScholarshipDetail />} />
-                  <Route path="/blog" element={<BlogPage />} />
-                  <Route path="/blog/:id" element={<BlogDetail />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Login />} />
-
-                  {/* Protected Admin Routes */}
-                  <Route element={<PrivateRoute adminOnly={true} />}>
-                    <Route path="/admin" element={<AdminDashboard />}>
-                      <Route path="scholarships" element={<ManageScholarships />} />
-                      <Route path="internships" element={<ManageInternships />} />
-                      <Route path="fellowships" element={<ManageFellowships />} />
-                      <Route path="blogs" element={<ManageBlogs />} />
-                      <Route path="ads" element={<ManageAds />} />
-                      <Route path="subscribers" element={<ManageSubscribers />} />
-                      <Route path="seo" element={<ManageSEO />} />
-                      <Route path="users" element={<ManageUsers />} />
-                      <Route path="settings" element={<ManageSettings />} />
-                    </Route>
-                  </Route>
-
-                  {/* Fallback Catch-all Route */}
-                  <Route path="*" element={<Home />} />
-                </Routes>
-              </main>
-              <Footer />
-              <SocialFloatingWidget />
-              <NewUserSubscriberModal />
-            </div>
-          </BrowserRouter>
-        </SEOProvider>
-      </SocialProvider>
-    </AuthProvider>
+              <AppContent />
+            </BrowserRouter>
+          </SEOProvider>
+        </SocialProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
