@@ -1,31 +1,33 @@
 import mongoose from 'mongoose';
 
-const scholarshipSchema = new mongoose.Schema(
+const seminarSchema = new mongoose.Schema(
   {
     _id: {
       type: mongoose.Schema.Types.Mixed,
     },
     opportunityType: {
       type: String,
-      enum: ['scholarship', 'internship', 'fellowship', 'seminar'],
-      default: 'scholarship',
+      default: 'seminar',
     },
     title: {
       type: String,
-      required: [true, 'Please add a title'],
+      required: [true, 'Please add a seminar/summit title'],
       trim: true,
     },
     description: {
       type: String,
       required: [true, 'Please add a description'],
     },
+    eventOrganizer: {
+      type: String,
+      default: 'International Youth Council / Organization',
+    },
     hostUniversity: {
       type: String,
-      default: 'Top Universities & Organizations',
+      default: 'Summit Host Venue / City',
     },
     degreeLevel: {
       type: String,
-      required: true,
       default: 'All Levels',
     },
     country: {
@@ -38,23 +40,23 @@ const scholarshipSchema = new mongoose.Schema(
     },
     fundingType: {
       type: String,
-      default: 'Full',
+      default: 'Fully Funded',
     },
     financialCoverage: {
       type: String,
-      default: 'Full Tuition Fee + Monthly Living Allowance + Accommodation + Health Insurance',
+      default: '100% Roundtrip Airfare Ticket + Accommodation + Meals + Summit Delegate Pass',
     },
     eligibilityCriteria: {
       type: String,
-      default: 'Non-Chinese citizen in good health. Academic performance transcript GPA 3.0+. Language Proficiency IELTS/TOEFL or English Medium Instruction certificate.',
+      default: 'Youth delegates aged 18-35 from around the world, passionate about international cooperation.',
     },
     requiredDocuments: {
       type: String,
-      default: '1. Passport Copy\n2. Highest Degree Diploma & Transcripts\n3. Two Recommendation Letters\n4. Study Plan / Proposal\n5. Foreigner Physical Exam Form\n6. Non-Criminal Record',
+      default: '1. Online Application Form\n2. Passport Copy\n3. Short Essay / Statement\n4. Headshot Photograph',
     },
     applicationFee: {
       type: String,
-      default: 'Free / No Application Fee',
+      default: 'Free / No Fee',
     },
     deadline: {
       type: Date,
@@ -70,7 +72,7 @@ const scholarshipSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default: '/uploads/default-scholarship.jpg',
+      default: '/uploads/wyf-egypt.svg',
     },
     status: {
       type: String,
@@ -83,5 +85,5 @@ const scholarshipSchema = new mongoose.Schema(
   }
 );
 
-const Scholarship = mongoose.models.Scholarship || mongoose.model('Scholarship', scholarshipSchema);
-export default Scholarship;
+const Seminar = mongoose.models.Seminar || mongoose.model('Seminar', seminarSchema);
+export default Seminar;

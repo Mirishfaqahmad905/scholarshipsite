@@ -1,32 +1,34 @@
 import mongoose from 'mongoose';
 
-const scholarshipSchema = new mongoose.Schema(
+const fellowshipSchema = new mongoose.Schema(
   {
     _id: {
       type: mongoose.Schema.Types.Mixed,
     },
     opportunityType: {
       type: String,
-      enum: ['scholarship', 'internship', 'fellowship', 'seminar'],
-      default: 'scholarship',
+      default: 'fellowship',
     },
     title: {
       type: String,
-      required: [true, 'Please add a title'],
+      required: [true, 'Please add a fellowship title'],
       trim: true,
     },
     description: {
       type: String,
       required: [true, 'Please add a description'],
     },
+    foundationOrInst: {
+      type: String,
+      default: 'International Foundation / Institute',
+    },
     hostUniversity: {
       type: String,
-      default: 'Top Universities & Organizations',
+      default: 'Host Institution / University',
     },
     degreeLevel: {
       type: String,
-      required: true,
-      default: 'All Levels',
+      default: 'MS / PhD / PostDoc',
     },
     country: {
       type: mongoose.Schema.Types.Mixed,
@@ -42,15 +44,15 @@ const scholarshipSchema = new mongoose.Schema(
     },
     financialCoverage: {
       type: String,
-      default: 'Full Tuition Fee + Monthly Living Allowance + Accommodation + Health Insurance',
+      default: 'Full Research Grant + Monthly Living Stipend + Travel Expense Reimbursement',
     },
     eligibilityCriteria: {
       type: String,
-      default: 'Non-Chinese citizen in good health. Academic performance transcript GPA 3.0+. Language Proficiency IELTS/TOEFL or English Medium Instruction certificate.',
+      default: 'Master/PhD degree holder or experienced professional with leadership background.',
     },
     requiredDocuments: {
       type: String,
-      default: '1. Passport Copy\n2. Highest Degree Diploma & Transcripts\n3. Two Recommendation Letters\n4. Study Plan / Proposal\n5. Foreigner Physical Exam Form\n6. Non-Criminal Record',
+      default: '1. Research Proposal\n2. CV with publication list\n3. Recommendation Letters\n4. Academic Certificates',
     },
     applicationFee: {
       type: String,
@@ -70,7 +72,7 @@ const scholarshipSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default: '/uploads/default-scholarship.jpg',
+      default: '/uploads/rotary-peace.svg',
     },
     status: {
       type: String,
@@ -83,5 +85,5 @@ const scholarshipSchema = new mongoose.Schema(
   }
 );
 
-const Scholarship = mongoose.models.Scholarship || mongoose.model('Scholarship', scholarshipSchema);
-export default Scholarship;
+const Fellowship = mongoose.models.Fellowship || mongoose.model('Fellowship', fellowshipSchema);
+export default Fellowship;

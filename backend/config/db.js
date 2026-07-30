@@ -3,6 +3,9 @@ import User from '../models/User.js';
 import Category from '../models/Category.js';
 import Country from '../models/Country.js';
 import Scholarship from '../models/Scholarship.js';
+import Internship from '../models/Internship.js';
+import Fellowship from '../models/Fellowship.js';
+import Seminar from '../models/Seminar.js';
 import Blog from '../models/Blog.js';
 import Ad from '../models/Ad.js';
 import { inMemoryStore } from './inMemoryStore.js';
@@ -87,6 +90,87 @@ const seedInitialData = async () => {
         });
       }
       console.log(`✅ Successfully seeded ${inMemoryStore.scholarships.length} scholarships to MongoDB.`);
+    }
+
+    const intCount = await Internship.countDocuments();
+    if (intCount === 0 && inMemoryStore.internships) {
+      console.log('🌱 Seeding initial internships into MongoDB...');
+      for (const item of inMemoryStore.internships) {
+        await Internship.create({
+          opportunityType: 'internship',
+          title: item.title,
+          description: item.description,
+          companyOrOrg: item.companyOrOrg,
+          hostUniversity: item.hostUniversity,
+          degreeLevel: item.degreeLevel,
+          country: item.country,
+          category: item.category,
+          fundingType: item.fundingType,
+          financialCoverage: item.financialCoverage,
+          eligibilityCriteria: item.eligibilityCriteria,
+          requiredDocuments: item.requiredDocuments,
+          applicationFee: item.applicationFee,
+          deadline: new Date(item.deadline),
+          officialLink: item.officialLink,
+          applyLink: item.applyLink,
+          status: item.status,
+          image: item.image,
+        });
+      }
+    }
+
+    const felCount = await Fellowship.countDocuments();
+    if (felCount === 0 && inMemoryStore.fellowships) {
+      console.log('🌱 Seeding initial fellowships into MongoDB...');
+      for (const item of inMemoryStore.fellowships) {
+        await Fellowship.create({
+          opportunityType: 'fellowship',
+          title: item.title,
+          description: item.description,
+          foundationOrInst: item.foundationOrInst,
+          hostUniversity: item.hostUniversity,
+          degreeLevel: item.degreeLevel,
+          country: item.country,
+          category: item.category,
+          fundingType: item.fundingType,
+          financialCoverage: item.financialCoverage,
+          eligibilityCriteria: item.eligibilityCriteria,
+          requiredDocuments: item.requiredDocuments,
+          applicationFee: item.applicationFee,
+          deadline: new Date(item.deadline),
+          officialLink: item.officialLink,
+          applyLink: item.applyLink,
+          status: item.status,
+          image: item.image,
+        });
+      }
+    }
+
+    const semCount = await Seminar.countDocuments();
+    if (semCount === 0 && inMemoryStore.seminars) {
+      console.log('🌱 Seeding initial seminars into MongoDB...');
+      for (const item of inMemoryStore.seminars) {
+        await Seminar.create({
+          opportunityType: 'seminar',
+          title: item.title,
+          description: item.description,
+          eventOrganizer: item.eventOrganizer,
+          hostUniversity: item.hostUniversity,
+          degreeLevel: item.degreeLevel,
+          country: item.country,
+          category: item.category,
+          fundingType: item.fundingType,
+          financialCoverage: item.financialCoverage,
+          eligibilityCriteria: item.eligibilityCriteria,
+          requiredDocuments: item.requiredDocuments,
+          applicationFee: item.applicationFee,
+          deadline: new Date(item.deadline),
+          officialLink: item.officialLink,
+          applyLink: item.applyLink,
+          status: item.status,
+          image: item.image,
+        });
+      }
     }
 
     const blogCount = await Blog.countDocuments();

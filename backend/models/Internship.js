@@ -1,32 +1,34 @@
 import mongoose from 'mongoose';
 
-const scholarshipSchema = new mongoose.Schema(
+const internshipSchema = new mongoose.Schema(
   {
     _id: {
       type: mongoose.Schema.Types.Mixed,
     },
     opportunityType: {
       type: String,
-      enum: ['scholarship', 'internship', 'fellowship', 'seminar'],
-      default: 'scholarship',
+      default: 'internship',
     },
     title: {
       type: String,
-      required: [true, 'Please add a title'],
+      required: [true, 'Please add an internship title'],
       trim: true,
     },
     description: {
       type: String,
       required: [true, 'Please add a description'],
     },
+    companyOrOrg: {
+      type: String,
+      default: 'Global Corporation / Research Lab',
+    },
     hostUniversity: {
       type: String,
-      default: 'Top Universities & Organizations',
+      default: 'Partner Institute / Organization',
     },
     degreeLevel: {
       type: String,
-      required: true,
-      default: 'All Levels',
+      default: 'BS / MS',
     },
     country: {
       type: mongoose.Schema.Types.Mixed,
@@ -38,23 +40,23 @@ const scholarshipSchema = new mongoose.Schema(
     },
     fundingType: {
       type: String,
-      default: 'Full',
+      default: 'Fully Funded',
     },
     financialCoverage: {
       type: String,
-      default: 'Full Tuition Fee + Monthly Living Allowance + Accommodation + Health Insurance',
+      default: 'Paid Stipend + Travel Allowance + Accommodation Support + Health Insurance',
     },
     eligibilityCriteria: {
       type: String,
-      default: 'Non-Chinese citizen in good health. Academic performance transcript GPA 3.0+. Language Proficiency IELTS/TOEFL or English Medium Instruction certificate.',
+      default: 'Enrolled in Bachelor/Master program, strong academic standing, English proficiency.',
     },
     requiredDocuments: {
       type: String,
-      default: '1. Passport Copy\n2. Highest Degree Diploma & Transcripts\n3. Two Recommendation Letters\n4. Study Plan / Proposal\n5. Foreigner Physical Exam Form\n6. Non-Criminal Record',
+      default: '1. CV/Resume\n2. Transcripts\n3. Cover Letter / Statement of Interest\n4. Recommendation Letter',
     },
     applicationFee: {
       type: String,
-      default: 'Free / No Application Fee',
+      default: 'Free / No Fee',
     },
     deadline: {
       type: Date,
@@ -70,7 +72,7 @@ const scholarshipSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default: '/uploads/default-scholarship.jpg',
+      default: '/uploads/cern-switzerland.svg',
     },
     status: {
       type: String,
@@ -83,5 +85,5 @@ const scholarshipSchema = new mongoose.Schema(
   }
 );
 
-const Scholarship = mongoose.models.Scholarship || mongoose.model('Scholarship', scholarshipSchema);
-export default Scholarship;
+const Internship = mongoose.models.Internship || mongoose.model('Internship', internshipSchema);
+export default Internship;

@@ -29,16 +29,37 @@ export const ScholarshipDetail: React.FC = () => {
     const fetchDetail = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(`/api/scholarships/${id}`);
+        let data = null;
+        try {
+          const res = await axios.get(`/api/scholarships/${id}`);
+          data = res.data;
+        } catch (e1) {
+          try {
+            const res = await axios.get(`/api/internships/${id}`);
+            data = res.data;
+          } catch (e2) {
+            try {
+              const res = await axios.get(`/api/fellowships/${id}`);
+              data = res.data;
+            } catch (e3) {
+              const res = await axios.get(`/api/seminars/${id}`);
+              data = res.data;
+            }
+          }
+        }
         setScholarship(data);
 
-        // Fetch related scholarships by degreeLevel
-        if (data.degreeLevel) {
-          const relRes = await axios.get(`/api/scholarships?degreeLevel=${data.degreeLevel}`);
-          setRelated(relRes.data.filter((s: Scholarship) => s._id !== data._id).slice(0, 3));
+        // Fetch related opportunities by degreeLevel
+        if (data && data.degreeLevel) {
+          try {
+            const relRes = await axios.get(`/api/scholarships?degreeLevel=${data.degreeLevel}`);
+            setRelated(relRes.data.filter((s: Scholarship) => s._id !== data._id).slice(0, 3));
+          } catch (relErr) {
+            // ignore
+          }
         }
       } catch (err) {
-        console.error('Failed to load scholarship details', err);
+        console.error('Failed to load opportunity details', err);
       } finally {
         setLoading(false);
       }
@@ -130,11 +151,24 @@ export const ScholarshipDetail: React.FC = () => {
 
           {/* Badges on image */}
           <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
-            <span className="px-3.5 py-1 bg-[#D4AF37] text-slate-950 font-bold text-[11px] uppercase tracking-wider rounded-xl shadow-sm">
+            <span
+              className={`px-3.5 py-1 text-[11px] font-extrabold uppercase tracking-wider rounded-xl shadow-md ${
+                scholarship.opportunityType === 'internship'
+                  ? 'bg-cyan-500 text-slate-950 border border-cyan-400'
+                  : scholarship.opportunityType === 'fellowship'
+                  ? 'bg-amber-400 text-slate-950 border border-amber-300'
+                  : scholarship.opportunityType === 'seminar'
+                  ? 'bg-emerald-400 text-slate-950 border border-emerald-300'
+                  : 'bg-[#D4AF37] text-slate-950 border border-amber-300'
+              }`}
+            >
+              {scholarship.opportunityType ? scholarship.opportunityType.toUpperCase() : 'SCHOLARSHIP'}
+            </span>
+            <span className="px-3.5 py-1 bg-slate-900/90 border border-slate-700 text-slate-200 font-bold text-[11px] uppercase tracking-wider rounded-xl backdrop-blur-md">
               {scholarship.fundingType} Coverage
             </span>
             <span className="px-3.5 py-1 bg-slate-900/90 border border-slate-700 text-[#D4AF37] font-bold text-[11px] uppercase tracking-wider rounded-xl backdrop-blur-md">
-              {scholarship.degreeLevel} Program
+              {scholarship.degreeLevel}
             </span>
           </div>
 

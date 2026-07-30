@@ -30,6 +30,9 @@ export const ManageScholarships: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
+  // Table category filter
+  const [tableFilter, setTableFilter] = useState<'all' | 'scholarship' | 'internship' | 'fellowship' | 'seminar'>('all');
+
   // Custom Delete Modal State (replaces native window.confirm)
   const [deletingItem, setDeletingItem] = useState<{ id: string; title: string } | null>(null);
   const [deleting, setDeleting] = useState<boolean>(false);
@@ -72,10 +75,21 @@ export const ManageScholarships: React.FC = () => {
   const fetchScholarships = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get('/api/scholarships');
-      setScholarships(data);
+      const [schRes, intRes, felRes, semRes] = await Promise.allSettled([
+        axios.get('/api/scholarships'),
+        axios.get('/api/internships'),
+        axios.get('/api/fellowships'),
+        axios.get('/api/seminars'),
+      ]);
+
+      const schList = schRes.status === 'fulfilled' ? schRes.value.data : [];
+      const intList = intRes.status === 'fulfilled' ? intRes.value.data : [];
+      const felList = felRes.status === 'fulfilled' ? felRes.value.data : [];
+      const semList = semRes.status === 'fulfilled' ? semRes.value.data : [];
+
+      setScholarships([...schList, ...intList, ...felList, ...semList]);
     } catch (err) {
-      console.error('Failed to fetch scholarships', err);
+      console.error('Failed to fetch opportunities', err);
     } finally {
       setLoading(false);
     }
@@ -85,24 +99,79 @@ export const ManageScholarships: React.FC = () => {
     fetchScholarships();
   }, []);
 
-  const openCreateModal = () => {
+  const selectOpportunityTypePreset = (type: 'scholarship' | 'internship' | 'fellowship' | 'seminar') => {
+    setOpportunityType(type);
+    if (!editingId) {
+      if (type === 'internship') {
+        setTitle('CERN Summer Student Paid Internship 2026');
+        setHostUniversity('CERN - European Organization for Nuclear Research');
+        setCountry('Switzerland');
+        setDegreeLevel('BS');
+        setCategory('Research Internship');
+        setFundingType('Fully Funded');
+        setFinancialCoverage('CHF 90/day stipend + Travel allowance + Accommodation support + Medical insurance');
+        setEligibilityCriteria('1. Enrolled in Bachelor or Master degree program\n2. Completed at least 3 years of full-time university studies\n3. English or French proficiency');
+        setRequiredDocuments('1. Official Transcripts\n2. CV / Resume\n3. Two Reference Letters\n4. Motivation Statement');
+        setOfficialLink('https://home.cern');
+        setApplyLink('https://careers.cern/summer-students');
+        setImage('/uploads/cern-switzerland.svg');
+      } else if (type === 'fellowship') {
+        setTitle('Rotary Peace Fellowship Program 2026');
+        setHostUniversity('Rotary International & Partner Universities');
+        setCountry('Australia');
+        setDegreeLevel('MS');
+        setCategory('Leadership Fellowship');
+        setFundingType('Full');
+        setFinancialCoverage('Full tuition & fees + Room and board + Roundtrip flight transportation + Fieldwork expenses');
+        setEligibilityCriteria('1. Bachelor degree holder with strong academic record\n2. At least 3 years of work experience in peace/development\n3. Leadership capability and English fluency');
+        setRequiredDocuments('1. Online Application Form\n2. Professional Resume\n3. Two Recommendation Letters\n4. Peace & Leadership Essays');
+        setOfficialLink('https://www.rotary.org');
+        setApplyLink('https://www.rotary.org/en/our-programs/peace-fellowships');
+        setImage('/uploads/rotary-peace.svg');
+      } else if (type === 'seminar') {
+        setTitle('World Youth Summit & Leadership Forum 2026');
+        setHostUniversity('World Youth Forum Organization');
+        setCountry('Egypt');
+        setDegreeLevel('All Levels');
+        setCategory('Youth Forum');
+        setFundingType('Fully Funded');
+        setFinancialCoverage('100% Free Flight Tickets + 5-Star Hotel Stay + All Meals & Local Transport + Summit Pass');
+        setEligibilityCriteria('1. Open to delegates aged 18 to 35 from all countries\n2. Passion for international affairs and technology\n3. English communication skills');
+        setRequiredDocuments('1. Delegate Application Form\n2. Passport Copy\n3. Passport Headshot Photo\n4. Short Essay Response');
+        setOfficialLink('https://wyfegypt.com');
+        setApplyLink('https://wyfegypt.com/apply');
+        setImage('/uploads/wyf-egypt.svg');
+      } else {
+        setTitle('Chinese Government Scholarship (CSC) Silk Road Program');
+        setHostUniversity('Tsinghua University / Host Institutions in China');
+        setCountry('China');
+        setDegreeLevel('MS');
+        setCategory('Government');
+        setFundingType('Full');
+        setFinancialCoverage('Full Tuition Waiver + RMB 3,000/month Stipend + Free Campus Dormitory + Comprehensive Medical Insurance');
+        setEligibilityCriteria('1. Non-Chinese national\n2. Bachelor degree or higher\n3. Under 35 years old\n4. HSK 4 or English Proficiency IELTS 6.0+');
+        setRequiredDocuments('1. CSC Application Form\n2. Passport Copy\n3. Notarized Diplomas & Transcripts\n4. Study Plan / Research Proposal\n5. Two Recommendation Letters\n6. Physical Examination Form\n7. Non-Criminal Record Certificate');
+        setOfficialLink('https://www.campuschina.org');
+        setApplyLink('https://studyinchina.csc.edu.cn');
+        setImage('/uploads/default-scholarship.jpg');
+      }
+    }
+  };
+
+  const openCreateModal = (type: 'scholarship' | 'internship' | 'fellowship' | 'seminar' = 'scholarship') => {
     setEditingId(null);
-    setOpportunityType('scholarship');
-    setTitle('');
-    setHostUniversity('Tsinghua University / Host Institution');
-    setDescription('Full scholarship for international students with high academic standing.');
-    setDegreeLevel('MS');
-    setCountry('China');
-    setCategory('Government');
-    setFundingType('Full');
-    setFinancialCoverage('Full Tuition Waiver + RMB 3,000/month Stipend + Free Campus Dormitory + Comprehensive Medical Insurance');
-    setEligibilityCriteria('1. Non-Chinese national\n2. Bachelor degree or higher\n3. Under 35 years old\n4. HSK 4 or English Proficiency IELTS 6.0+');
-    setRequiredDocuments('1. CSC Application Form\n2. Passport Copy\n3. Notarized Diplomas & Transcripts\n4. Study Plan / Research Proposal\n5. Two Recommendation Letters\n6. Physical Examination Form\n7. Non-Criminal Record Certificate');
-    setApplicationFee('Free / No Application Fee');
+    selectOpportunityTypePreset(type);
     setDeadline(new Date(Date.now() + 90 * 24 * 3600 * 1000).toISOString().slice(0, 10));
-    setOfficialLink('https://www.campuschina.org');
-    setApplyLink('https://studyinchina.csc.edu.cn');
-    setImage('/uploads/default-scholarship.jpg');
+    setApplicationFee('Free / No Application Fee');
+    setDescription(
+      type === 'internship'
+        ? 'Fully funded or paid research/lab internship program for global candidates.'
+        : type === 'fellowship'
+        ? 'Prestigious leadership or research fellowship providing stipend and academic support.'
+        : type === 'seminar'
+        ? 'Fully funded international youth summit and conference opportunity.'
+        : 'Full funding scholarship opportunity open for international applicants meeting academic eligibility standards.'
+    );
     setStatus('open');
     setFormError(null);
     setShowModal(true);
@@ -131,6 +200,19 @@ export const ManageScholarships: React.FC = () => {
     setShowModal(true);
   };
 
+  const getEndpointForType = (type: string) => {
+    switch (type) {
+      case 'internship':
+        return '/api/internships';
+      case 'fellowship':
+        return '/api/fellowships';
+      case 'seminar':
+        return '/api/seminars';
+      default:
+        return '/api/scholarships';
+    }
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !description || !country || !deadline || !officialLink) {
@@ -142,6 +224,9 @@ export const ManageScholarships: React.FC = () => {
       opportunityType,
       title,
       hostUniversity,
+      companyOrOrg: hostUniversity,
+      foundationOrInst: hostUniversity,
+      eventOrganizer: hostUniversity,
       description,
       degreeLevel,
       country,
@@ -158,16 +243,22 @@ export const ManageScholarships: React.FC = () => {
       status,
     };
 
+    const targetEndpoint = getEndpointForType(opportunityType);
+
     try {
       setSubmitting(true);
       setFormError(null);
 
       if (editingId) {
-        await axios.put(`/api/scholarships/${editingId}`, payload);
-        showToast(`Opportunity "${title}" updated successfully!`, 'success');
+        try {
+          await axios.put(`${targetEndpoint}/${editingId}`, payload);
+        } catch (e1) {
+          await axios.put(`/api/scholarships/${editingId}`, payload);
+        }
+        showToast(`${opportunityType.toUpperCase()} "${title}" updated successfully!`, 'success');
       } else {
-        await axios.post('/api/scholarships', payload);
-        showToast(`New opportunity "${title}" added successfully!`, 'success');
+        await axios.post(targetEndpoint, payload);
+        showToast(`New ${opportunityType} "${title}" added successfully!`, 'success');
       }
 
       setShowModal(false);
@@ -190,13 +281,27 @@ export const ManageScholarships: React.FC = () => {
       setDeleting(true);
       // Optimistic filter
       setScholarships((prev) => prev.filter((s) => s._id !== deletingItem.id));
-      await axios.delete(`/api/scholarships/${deletingItem.id}`);
-      showToast(`Scholarship "${deletingItem.title}" permanently deleted from database!`, 'success');
+      
+      try {
+        await axios.delete(`/api/scholarships/${deletingItem.id}`);
+      } catch (e1) {
+        try {
+          await axios.delete(`/api/internships/${deletingItem.id}`);
+        } catch (e2) {
+          try {
+            await axios.delete(`/api/fellowships/${deletingItem.id}`);
+          } catch (e3) {
+            await axios.delete(`/api/seminars/${deletingItem.id}`);
+          }
+        }
+      }
+
+      showToast(`Item "${deletingItem.title}" permanently deleted from MongoDB database!`, 'success');
       setDeletingItem(null);
       fetchScholarships();
     } catch (err: any) {
       console.error('Delete error', err);
-      showToast('Failed to delete scholarship from database.', 'error');
+      showToast('Failed to delete item from database.', 'error');
       fetchScholarships();
     } finally {
       setDeleting(false);
@@ -236,19 +341,112 @@ export const ManageScholarships: React.FC = () => {
       )}
 
       {/* Action Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-serif font-semibold text-white">
-            Manage Scholarships <span className="text-[#D4AF37] italic font-normal">({scholarships.length})</span>
+            Manage Opportunities & Listings <span className="text-[#D4AF37] italic font-normal">({scholarships.length})</span>
           </h2>
-          <p className="text-xs text-slate-400 font-sans mt-0.5">Add, update, or remove funding listings in MongoDB database</p>
+          <p className="text-xs text-slate-400 font-sans mt-0.5">Add, update, or remove scholarships, internships, fellowships, and seminars in MongoDB backend database</p>
         </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => openCreateModal('scholarship')}
+            className="px-3.5 py-2.5 bg-[#D4AF37] hover:bg-[#e0bc46] text-slate-950 font-bold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-md flex items-center gap-1.5"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>+ Add Scholarship</span>
+          </button>
+          <button
+            onClick={() => openCreateModal('internship')}
+            className="px-3.5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-md flex items-center gap-1.5"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>+ Add Internship</span>
+          </button>
+          <button
+            onClick={() => openCreateModal('fellowship')}
+            className="px-3.5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-md flex items-center gap-1.5"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>+ Add Fellowship</span>
+          </button>
+          <button
+            onClick={() => openCreateModal('seminar')}
+            className="px-3.5 py-2.5 bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-md flex items-center gap-1.5"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>+ Add Seminar</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Backend Database Status Notice */}
+      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-start gap-3 shadow-sm">
+        <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 shrink-0">
+          <Sparkles className="w-5 h-5" />
+        </div>
+        <div>
+          <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider">
+            Backend Database Integration Active (MongoDB API)
+          </h4>
+          <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+            All records (Scholarships, Internships, Fellowships, Seminars) are persisted directly in the backend database. Every action (Create, Read, Update, Delete) interacts with Express backend controller routes (<code className="text-[#D4AF37] bg-slate-950 px-1.5 py-0.5 rounded">/api/scholarships</code>, <code className="text-cyan-400 bg-slate-950 px-1.5 py-0.5 rounded">/api/internships</code>, <code className="text-amber-400 bg-slate-950 px-1.5 py-0.5 rounded">/api/fellowships</code>, <code className="text-emerald-400 bg-slate-950 px-1.5 py-0.5 rounded">/api/seminars</code>). No listings are stored hardcoded in frontend code.
+          </p>
+        </div>
+      </div>
+
+      {/* Category Marklist Filter Bar for Table */}
+      <div className="flex flex-wrap items-center gap-2 bg-slate-900/60 p-2 rounded-2xl border border-slate-800/80">
+        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3">Filter Database:</span>
         <button
-          onClick={openCreateModal}
-          className="px-4 py-2.5 bg-[#D4AF37] hover:bg-[#e0bc46] text-slate-950 font-bold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-md flex items-center gap-1.5"
+          onClick={() => setTableFilter('all')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            tableFilter === 'all'
+              ? 'bg-[#D4AF37] text-slate-950 shadow-sm'
+              : 'text-slate-400 hover:text-white hover:bg-slate-800'
+          }`}
         >
-          <Plus className="w-4 h-4" />
-          <span>Add Scholarship</span>
+          All ({scholarships.length})
+        </button>
+        <button
+          onClick={() => setTableFilter('scholarship')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
+            tableFilter === 'scholarship'
+              ? 'bg-[#D4AF37] text-slate-950 shadow-sm'
+              : 'text-slate-400 hover:text-white hover:bg-slate-800'
+          }`}
+        >
+          🎓 Scholarships ({scholarships.filter(s => (s.opportunityType || 'scholarship') === 'scholarship').length})
+        </button>
+        <button
+          onClick={() => setTableFilter('internship')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
+            tableFilter === 'internship'
+              ? 'bg-cyan-500 text-slate-950 shadow-sm'
+              : 'text-slate-400 hover:text-white hover:bg-slate-800'
+          }`}
+        >
+          💼 Internships ({scholarships.filter(s => s.opportunityType === 'internship').length})
+        </button>
+        <button
+          onClick={() => setTableFilter('fellowship')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
+            tableFilter === 'fellowship'
+              ? 'bg-amber-400 text-slate-950 shadow-sm'
+              : 'text-slate-400 hover:text-white hover:bg-slate-800'
+          }`}
+        >
+          🌟 Fellowships ({scholarships.filter(s => s.opportunityType === 'fellowship').length})
+        </button>
+        <button
+          onClick={() => setTableFilter('seminar')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
+            tableFilter === 'seminar'
+              ? 'bg-emerald-400 text-slate-950 shadow-sm'
+              : 'text-slate-400 hover:text-white hover:bg-slate-800'
+          }`}
+        >
+          🌍 Seminars ({scholarships.filter(s => s.opportunityType === 'seminar').length})
         </button>
       </div>
 
@@ -277,7 +475,9 @@ export const ManageScholarships: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/80">
-                {scholarships.map((sch) => (
+                {scholarships
+                  .filter((sch) => tableFilter === 'all' || (sch.opportunityType || 'scholarship') === tableFilter)
+                  .map((sch) => (
                   <tr key={sch._id} className="hover:bg-slate-800/40 transition-colors">
                     <td className="p-4">
                       <img
@@ -403,8 +603,10 @@ export const ManageScholarships: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-5 shadow-2xl my-8">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="text-xl font-serif font-semibold text-white">
-                {editingId ? 'Edit Scholarship' : 'Add New Scholarship'}
+              <h3 className="text-xl font-serif font-semibold text-white capitalize">
+                {editingId
+                  ? `Edit ${opportunityType}`
+                  : `Add New ${opportunityType === 'scholarship' ? 'Scholarship' : opportunityType === 'internship' ? 'Internship' : opportunityType === 'fellowship' ? 'Fellowship' : 'Seminar / Summit'}`}
               </h3>
               <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-white">
                 <X className="w-5 h-5" />
@@ -424,41 +626,138 @@ export const ManageScholarships: React.FC = () => {
                 <AdBanner placement="in-feed" className="my-1" />
               </div>
 
-              <div>
-                <label className="block text-[10px] font-bold text-amber-400 uppercase tracking-[0.2em] mb-1">Opportunity Type</label>
-                <select
-                  required
-                  value={opportunityType}
-                  onChange={(e) => setOpportunityType(e.target.value as any)}
-                  className="w-full px-3.5 py-2.5 bg-slate-950/80 border border-amber-500/50 rounded-2xl text-xs text-white font-bold focus:outline-none focus:border-[#D4AF37]"
-                >
-                  <option value="scholarship">🎓 Scholarship (Degree / Grant Program)</option>
-                  <option value="internship">💼 Internship (Paid / Lab Placement)</option>
-                  <option value="fellowship">🌟 Fellowship (Research / Leadership)</option>
-                  <option value="seminar">🌍 International Seminar (Summit / Forum)</option>
-                </select>
+              {/* Category Marklist Radio Group */}
+              <div className="space-y-2">
+                <label className="block text-[10px] font-bold text-amber-400 uppercase tracking-[0.2em]">
+                  Select Opportunity Category / Type Checklist <span className="text-rose-400">*</span>
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => selectOpportunityTypePreset('scholarship')}
+                    className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between ${
+                      opportunityType === 'scholarship'
+                        ? 'bg-[#D4AF37]/15 border-[#D4AF37] ring-2 ring-[#D4AF37]/40 text-white'
+                        : 'bg-slate-950/70 border-slate-800 text-slate-400 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <span className="text-base">🎓</span>
+                      <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
+                        opportunityType === 'scholarship' ? 'border-[#D4AF37] bg-[#D4AF37]' : 'border-slate-700'
+                      }`}>
+                        {opportunityType === 'scholarship' && <Check className="w-2.5 h-2.5 text-slate-950 font-bold" />}
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-white">Scholarship</h4>
+                      <p className="text-[9px] text-slate-400">Tuition & Degree Grant</p>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => selectOpportunityTypePreset('internship')}
+                    className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between ${
+                      opportunityType === 'internship'
+                        ? 'bg-cyan-500/15 border-cyan-400 ring-2 ring-cyan-500/40 text-white'
+                        : 'bg-slate-950/70 border-slate-800 text-slate-400 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <span className="text-base">💼</span>
+                      <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
+                        opportunityType === 'internship' ? 'border-cyan-400 bg-cyan-400' : 'border-slate-700'
+                      }`}>
+                        {opportunityType === 'internship' && <Check className="w-2.5 h-2.5 text-slate-950 font-bold" />}
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-white">Internship</h4>
+                      <p className="text-[9px] text-slate-400">Paid / Lab Placement</p>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => selectOpportunityTypePreset('fellowship')}
+                    className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between ${
+                      opportunityType === 'fellowship'
+                        ? 'bg-amber-500/15 border-amber-400 ring-2 ring-amber-500/40 text-white'
+                        : 'bg-slate-950/70 border-slate-800 text-slate-400 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <span className="text-base">🌟</span>
+                      <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
+                        opportunityType === 'fellowship' ? 'border-amber-400 bg-amber-400' : 'border-slate-700'
+                      }`}>
+                        {opportunityType === 'fellowship' && <Check className="w-2.5 h-2.5 text-slate-950 font-bold" />}
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-white">Fellowship</h4>
+                      <p className="text-[9px] text-slate-400">Research & PostDoc</p>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => selectOpportunityTypePreset('seminar')}
+                    className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between ${
+                      opportunityType === 'seminar'
+                        ? 'bg-emerald-500/15 border-emerald-400 ring-2 ring-emerald-500/40 text-white'
+                        : 'bg-slate-950/70 border-slate-800 text-slate-400 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <span className="text-base">🌍</span>
+                      <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
+                        opportunityType === 'seminar' ? 'border-emerald-400 bg-emerald-400' : 'border-slate-700'
+                      }`}>
+                        {opportunityType === 'seminar' && <Check className="w-2.5 h-2.5 text-slate-950 font-bold" />}
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-white">Seminar</h4>
+                      <p className="text-[9px] text-slate-400">Summit & Conference</p>
+                    </div>
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] mb-1">Title</label>
+                  <label className="block text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] mb-1">
+                    {opportunityType === 'internship' ? 'Internship Title' : opportunityType === 'fellowship' ? 'Fellowship Title' : opportunityType === 'seminar' ? 'Seminar / Summit Title' : 'Scholarship Title'}
+                  </label>
                   <input
                     type="text"
                     required
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g. CERN Openlab Summer Student Program 2026"
+                    placeholder={
+                      opportunityType === 'internship'
+                        ? 'e.g. CERN Summer Student Paid Internship 2026'
+                        : opportunityType === 'fellowship'
+                        ? 'e.g. Humboldt Research Fellowship Germany'
+                        : opportunityType === 'seminar'
+                        ? 'e.g. World Youth Forum & Leadership Summit'
+                        : 'e.g. Chinese Government Scholarship (CSC)'
+                    }
                     className="w-full px-3.5 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] mb-1">Host University / Institute / Host Org</label>
+                  <label className="block text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] mb-1">
+                    {opportunityType === 'internship' ? 'Host Company / Lab / Org' : opportunityType === 'fellowship' ? 'Host Institute / Foundation' : opportunityType === 'seminar' ? 'Host Summit / Organization' : 'Host University / Institute'}
+                  </label>
                   <input
                     type="text"
                     value={hostUniversity}
                     onChange={(e) => setHostUniversity(e.target.value)}
-                    placeholder="e.g. CERN / Max Planck / United Nations"
+                    placeholder="e.g. CERN / Max Planck / World Bank / Tsinghua"
                     className="w-full px-3.5 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>

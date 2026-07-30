@@ -6,6 +6,9 @@ import connectDB, { getDbStatus } from './config/db.js';
 
 import authRoutes from './routes/authRoutes.js';
 import scholarshipRoutes from './routes/scholarshipRoutes.js';
+import internshipRoutes from './routes/internshipRoutes.js';
+import fellowshipRoutes from './routes/fellowshipRoutes.js';
+import seminarRoutes from './routes/seminarRoutes.js';
 import blogRoutes from './routes/blogRoutes.js';
 import adRoutes from './routes/adRoutes.js';
 import userRoutes from './routes/userRoutes.js';
@@ -61,6 +64,9 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/scholarships', scholarshipRoutes);
+app.use('/api/internships', internshipRoutes);
+app.use('/api/fellowships', fellowshipRoutes);
+app.use('/api/seminars', seminarRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/ads', adRoutes);
 app.use('/api/users', userRoutes);

@@ -38,7 +38,6 @@ export const Scholarships: React.FC<ScholarshipsPageProps> = ({ presetType }) =>
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      if (presetType) params.append('opportunityType', presetType);
       if (search) params.append('search', search);
       if (degreeLevel !== 'All') params.append('degreeLevel', degreeLevel);
       if (country !== 'All') params.append('country', country);
@@ -46,8 +45,37 @@ export const Scholarships: React.FC<ScholarshipsPageProps> = ({ presetType }) =>
       if (fundingType !== 'All') params.append('fundingType', fundingType);
       if (status !== 'All') params.append('status', status);
 
-      const { data } = await axios.get(`/api/scholarships?${params.toString()}`);
-      setScholarships(data);
+      let allResults: Scholarship[] = [];
+      const queryStr = params.toString() ? `?${params.toString()}` : '';
+
+      if (presetType === 'scholarship') {
+        const { data } = await axios.get(`/api/scholarships${queryStr}`);
+        allResults = data;
+      } else if (presetType === 'internship') {
+        const { data } = await axios.get(`/api/internships${queryStr}`);
+        allResults = data;
+      } else if (presetType === 'fellowship') {
+        const { data } = await axios.get(`/api/fellowships${queryStr}`);
+        allResults = data;
+      } else if (presetType === 'seminar') {
+        const { data } = await axios.get(`/api/seminars${queryStr}`);
+        allResults = data;
+      } else {
+        // Aggregate from all endpoints
+        const [schRes, intRes, felRes, semRes] = await Promise.allSettled([
+          axios.get(`/api/scholarships${queryStr}`),
+          axios.get(`/api/internships${queryStr}`),
+          axios.get(`/api/fellowships${queryStr}`),
+          axios.get(`/api/seminars${queryStr}`),
+        ]);
+        const schList = schRes.status === 'fulfilled' ? schRes.value.data : [];
+        const intList = intRes.status === 'fulfilled' ? intRes.value.data : [];
+        const felList = felRes.status === 'fulfilled' ? felRes.value.data : [];
+        const semList = semRes.status === 'fulfilled' ? semRes.value.data : [];
+        allResults = [...schList, ...intList, ...felList, ...semList];
+      }
+
+      setScholarships(allResults);
     } catch (err) {
       console.error('Failed to load opportunities', err);
     } finally {
