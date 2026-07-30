@@ -5,9 +5,13 @@ import { Scholarship } from '../types';
 import { FilterDropdowns } from '../components/FilterDropdowns';
 import { ScholarshipCard } from '../components/ScholarshipCard';
 import { AdBanner } from '../components/AdBanner';
-import { GraduationCap, Sparkles, AlertCircle } from 'lucide-react';
+import { GraduationCap, Sparkles, AlertCircle, Briefcase, Award, Globe } from 'lucide-react';
 
-export const Scholarships: React.FC = () => {
+interface ScholarshipsPageProps {
+  presetType?: 'scholarship' | 'internship' | 'fellowship' | 'seminar';
+}
+
+export const Scholarships: React.FC<ScholarshipsPageProps> = ({ presetType }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [search, setSearch] = useState<string>(searchParams.get('search') || '');
@@ -34,6 +38,7 @@ export const Scholarships: React.FC = () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
+      if (presetType) params.append('opportunityType', presetType);
       if (search) params.append('search', search);
       if (degreeLevel !== 'All') params.append('degreeLevel', degreeLevel);
       if (country !== 'All') params.append('country', country);
@@ -44,7 +49,7 @@ export const Scholarships: React.FC = () => {
       const { data } = await axios.get(`/api/scholarships?${params.toString()}`);
       setScholarships(data);
     } catch (err) {
-      console.error('Failed to load scholarships', err);
+      console.error('Failed to load opportunities', err);
     } finally {
       setLoading(false);
     }
@@ -52,7 +57,7 @@ export const Scholarships: React.FC = () => {
 
   useEffect(() => {
     fetchScholarships();
-  }, [search, degreeLevel, country, category, fundingType, status]);
+  }, [presetType, search, degreeLevel, country, category, fundingType, status]);
 
   const handleReset = () => {
     setSearch('');
@@ -64,20 +69,64 @@ export const Scholarships: React.FC = () => {
     setSearchParams({});
   };
 
+  // Header customization by type
+  const getHeaderInfo = () => {
+    switch (presetType) {
+      case 'internship':
+        return {
+          icon: <Briefcase className="w-3.5 h-3.5 text-cyan-400" />,
+          badge: 'Global Internship Directory',
+          titlePrefix: 'Paid & Funded ',
+          titleHighlight: 'Internships',
+          subtitle: 'Discover verified international summer internships, lab placements, and industry training programs worldwide.',
+          emptyText: 'No Internships Found',
+        };
+      case 'fellowship':
+        return {
+          icon: <Award className="w-3.5 h-3.5 text-amber-400" />,
+          badge: 'International Fellowships',
+          titlePrefix: 'Prestigious Global ',
+          titleHighlight: 'Fellowships',
+          subtitle: 'Explore elite leadership, research, and post-doctoral fellowship opportunities funded by global foundations.',
+          emptyText: 'No Fellowships Found',
+        };
+      case 'seminar':
+        return {
+          icon: <Globe className="w-3.5 h-3.5 text-emerald-400" />,
+          badge: 'International Seminars & Summits',
+          titlePrefix: 'Fully Funded ',
+          titleHighlight: 'Seminars & Summits',
+          subtitle: 'Attend top international youth forums, academic seminars, and cultural exchange summits across different countries.',
+          emptyText: 'No Seminars Found',
+        };
+      default:
+        return {
+          icon: <GraduationCap className="w-3.5 h-3.5 text-[#D4AF37]" />,
+          badge: 'Scholarship Directory',
+          titlePrefix: 'Find Grants & ',
+          titleHighlight: 'Scholarships',
+          subtitle: 'Browse through fully and partially funded scholarships sorted by degree level, destination country, and funding category.',
+          emptyText: 'No Scholarships Found',
+        };
+    }
+  };
+
+  const header = getHeaderInfo();
+
   return (
     <div className="min-h-screen bg-[#0b1120] text-slate-100 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Page Header */}
         <div>
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[11px] font-bold uppercase tracking-[0.2em] mb-3">
-            <GraduationCap className="w-3.5 h-3.5 text-[#D4AF37]" />
-            <span>Scholarship Directory</span>
+            {header.icon}
+            <span>{header.badge}</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-serif font-semibold text-white">
-            Find Grants & <span className="italic font-normal text-[#D4AF37]">Scholarships</span>
+            {header.titlePrefix}<span className="italic font-normal text-[#D4AF37]">{header.titleHighlight}</span>
           </h1>
           <p className="text-sm text-slate-400 mt-2 font-sans">
-            Browse through fully and partially funded opportunities sorted by degree level, destination country, and funding category.
+            {header.subtitle}
           </p>
         </div>
 
@@ -123,9 +172,9 @@ export const Scholarships: React.FC = () => {
             ) : scholarships.length === 0 ? (
               <div className="bg-slate-900/60 border border-slate-800/80 rounded-3xl p-12 text-center space-y-4">
                 <AlertCircle className="w-10 h-10 text-[#D4AF37] mx-auto" />
-                <h3 className="text-xl font-serif font-semibold text-white">No Scholarships Found</h3>
+                <h3 className="text-xl font-serif font-semibold text-white">{header.emptyText}</h3>
                 <p className="text-xs text-slate-400 max-w-md mx-auto">
-                  Try clearing search filters or selecting a different degree level or destination.
+                  Try clearing search filters or selecting a different target country or category.
                 </p>
                 <button
                   onClick={handleReset}
@@ -150,10 +199,10 @@ export const Scholarships: React.FC = () => {
             <div className="bg-slate-900/60 border border-slate-800/80 p-6 rounded-3xl space-y-3 backdrop-blur-md">
               <div className="flex items-center gap-2 text-[#D4AF37] font-bold text-xs uppercase tracking-[0.2em]">
                 <Sparkles className="w-4 h-4" />
-                <span>Editorial Tip</span>
+                <span>Application Tip</span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                Most government programs (like China’s CSC or UK’s Chevening) open applications between August and December. Prepare your academic transcripts and recommendation letters early.
+                Always double check official guidelines, eligibility criteria, and visa requirements on the official provider link before submitting your application.
               </p>
             </div>
           </div>
@@ -162,3 +211,8 @@ export const Scholarships: React.FC = () => {
     </div>
   );
 };
+
+export const Internships: React.FC = () => <Scholarships presetType="internship" />;
+export const Fellowships: React.FC = () => <Scholarships presetType="fellowship" />;
+export const Seminars: React.FC = () => <Scholarships presetType="seminar" />;
+

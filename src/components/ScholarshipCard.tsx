@@ -35,27 +35,41 @@ export const ScholarshipCard: React.FC<ScholarshipCardProps> = ({ scholarship })
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
 
           {/* Top Badges */}
-          <div className="absolute top-3 left-3 flex items-center gap-2">
+          <div className="absolute top-3 left-3 flex flex-wrap items-center gap-1.5">
             <span
-              className={`px-2.5 py-1 text-[10px] font-bold rounded-lg tracking-wider uppercase backdrop-blur-md shadow-sm ${
+              className={`px-2.5 py-1 text-[10px] font-extrabold rounded-lg tracking-wider uppercase backdrop-blur-md shadow-md ${
+                scholarship.opportunityType === 'internship'
+                  ? 'bg-cyan-500 text-slate-950 border border-cyan-400'
+                  : scholarship.opportunityType === 'fellowship'
+                  ? 'bg-amber-400 text-slate-950 border border-amber-300'
+                  : scholarship.opportunityType === 'seminar'
+                  ? 'bg-emerald-400 text-slate-950 border border-emerald-300'
+                  : 'bg-[#D4AF37] text-slate-950 border border-amber-300'
+              }`}
+            >
+              {scholarship.opportunityType ? scholarship.opportunityType.toUpperCase() : 'SCHOLARSHIP'}
+            </span>
+
+            <span
+              className={`px-2 py-0.5 text-[10px] font-bold rounded-lg tracking-wider uppercase backdrop-blur-md ${
                 scholarship.degreeLevel === 'PhD'
                   ? 'bg-purple-950/80 text-purple-200 border border-purple-500/40'
                   : scholarship.degreeLevel === 'MS'
                   ? 'bg-blue-950/80 text-blue-200 border border-blue-500/40'
-                  : 'bg-emerald-950/80 text-emerald-200 border border-emerald-500/40'
+                  : 'bg-slate-900/90 text-slate-200 border border-slate-700/80'
               }`}
             >
-              {scholarship.degreeLevel} Degree
+              {scholarship.degreeLevel}
             </span>
 
             <span
-              className={`px-2.5 py-1 text-[10px] font-bold rounded-lg tracking-wider uppercase backdrop-blur-md ${
-                scholarship.fundingType === 'Full'
-                  ? 'bg-[#D4AF37] text-slate-950 font-bold'
+              className={`px-2 py-0.5 text-[10px] font-bold rounded-lg tracking-wider uppercase backdrop-blur-md ${
+                scholarship.fundingType === 'Full' || scholarship.fundingType === 'Fully Funded'
+                  ? 'bg-emerald-950/90 text-emerald-300 border border-emerald-500/40'
                   : 'bg-slate-800/90 text-slate-200 border border-slate-700'
               }`}
             >
-              {scholarship.fundingType} Funding
+              {scholarship.fundingType}
             </span>
           </div>
 

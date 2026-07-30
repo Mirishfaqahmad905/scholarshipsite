@@ -2,9 +2,17 @@ import mongoose from 'mongoose';
 
 const scholarshipSchema = new mongoose.Schema(
   {
+    _id: {
+      type: mongoose.Schema.Types.Mixed,
+    },
+    opportunityType: {
+      type: String,
+      enum: ['scholarship', 'internship', 'fellowship', 'seminar'],
+      default: 'scholarship',
+    },
     title: {
       type: String,
-      required: [true, 'Please add a scholarship title'],
+      required: [true, 'Please add a title'],
       trim: true,
     },
     description: {
@@ -13,12 +21,12 @@ const scholarshipSchema = new mongoose.Schema(
     },
     hostUniversity: {
       type: String,
-      default: 'Top Universities',
+      default: 'Top Universities & Organizations',
     },
     degreeLevel: {
       type: String,
       required: true,
-      enum: ['BS', 'MS', 'PhD'],
+      default: 'All Levels',
     },
     country: {
       type: mongoose.Schema.Types.Mixed,

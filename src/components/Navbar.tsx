@@ -35,10 +35,10 @@ export const Navbar: React.FC = () => {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-2 text-xs uppercase tracking-wider font-semibold">
+          <div className="hidden lg:flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold">
             <Link
               to="/"
-              className={`px-4 py-2 rounded-lg transition-all ${
+              className={`px-3 py-2 rounded-lg transition-all ${
                 isActive('/') ? 'bg-slate-800/80 text-[#D4AF37] font-bold border border-slate-700/60' : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
               }`}
             >
@@ -46,41 +46,49 @@ export const Navbar: React.FC = () => {
             </Link>
             <Link
               to="/scholarships"
-              className={`px-4 py-2 rounded-lg transition-all ${
+              className={`px-3 py-2 rounded-lg transition-all ${
                 isActive('/scholarships') ? 'bg-slate-800/80 text-[#D4AF37] font-bold border border-slate-700/60' : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
               }`}
             >
               Scholarships
             </Link>
             <Link
+              to="/internships"
+              className={`px-3 py-2 rounded-lg transition-all ${
+                isActive('/internships') ? 'bg-slate-800/80 text-[#D4AF37] font-bold border border-slate-700/60' : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
+              }`}
+            >
+              Internships
+            </Link>
+            <Link
+              to="/fellowships"
+              className={`px-3 py-2 rounded-lg transition-all ${
+                isActive('/fellowships') ? 'bg-slate-800/80 text-[#D4AF37] font-bold border border-slate-700/60' : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
+              }`}
+            >
+              Fellowships
+            </Link>
+            <Link
+              to="/seminars"
+              className={`px-3 py-2 rounded-lg transition-all ${
+                isActive('/seminars') ? 'bg-slate-800/80 text-[#D4AF37] font-bold border border-slate-700/60' : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
+              }`}
+            >
+              Seminars
+            </Link>
+            <Link
               to="/blog"
-              className={`px-4 py-2 rounded-lg transition-all ${
+              className={`px-3 py-2 rounded-lg transition-all ${
                 isActive('/blog') ? 'bg-slate-800/80 text-[#D4AF37] font-bold border border-slate-700/60' : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
               }`}
             >
-              Blog & Guides
-            </Link>
-            <Link
-              to="/about"
-              className={`px-4 py-2 rounded-lg transition-all ${
-                isActive('/about') ? 'bg-slate-800/80 text-[#D4AF37] font-bold border border-slate-700/60' : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
-              }`}
-            >
-              About
-            </Link>
-            <Link
-              to="/contact"
-              className={`px-4 py-2 rounded-lg transition-all ${
-                isActive('/contact') ? 'bg-slate-800/80 text-[#D4AF37] font-bold border border-slate-700/60' : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
-              }`}
-            >
-              Contact
+              Blog
             </Link>
 
             {isAdmin && (
               <Link
                 to="/admin"
-                className={`ml-2 px-3.5 py-1.5 rounded-lg border border-[#D4AF37]/50 text-[#D4AF37] bg-[#D4AF37]/10 hover:bg-[#D4AF37] hover:text-slate-950 font-bold transition-all duration-200 flex items-center gap-1.5 text-[11px] uppercase tracking-widest`}
+                className={`ml-1 px-3 py-1.5 rounded-lg border border-[#D4AF37]/50 text-[#D4AF37] bg-[#D4AF37]/10 hover:bg-[#D4AF37] hover:text-slate-950 font-bold transition-all duration-200 flex items-center gap-1 text-[11px] uppercase tracking-widest`}
               >
                 <LayoutDashboard className="w-3.5 h-3.5" />
                 Admin
@@ -154,6 +162,27 @@ export const Navbar: React.FC = () => {
             className="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800"
           >
             Scholarships
+          </Link>
+          <Link
+            to="/internships"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800"
+          >
+            Internships
+          </Link>
+          <Link
+            to="/fellowships"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800"
+          >
+            Fellowships
+          </Link>
+          <Link
+            to="/seminars"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800"
+          >
+            Seminars
           </Link>
           <Link
             to="/blog"

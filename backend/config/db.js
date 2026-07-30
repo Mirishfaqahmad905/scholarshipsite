@@ -67,6 +67,7 @@ const seedInitialData = async () => {
       console.log('🌱 Seeding initial scholarships into MongoDB...');
       for (const s of inMemoryStore.scholarships) {
         await Scholarship.create({
+          opportunityType: s.opportunityType || 'scholarship',
           title: s.title,
           description: s.description,
           hostUniversity: s.hostUniversity || 'Top Universities & Institutions',

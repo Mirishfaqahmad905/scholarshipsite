@@ -12,7 +12,7 @@ import { NewUserSubscriberModal } from './components/NewUserSubscriberModal';
 import { GoogleAdScriptLoader } from './components/GoogleAdScriptLoader';
 
 import { Home } from './pages/Home';
-import { Scholarships } from './pages/Scholarships';
+import { Scholarships, Internships, Fellowships, Seminars } from './pages/Scholarships';
 import { ScholarshipDetail } from './pages/ScholarshipDetail';
 import { BlogPage } from './pages/Blog';
 import { BlogDetail } from './pages/BlogDetail';
@@ -46,6 +46,10 @@ export default function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/scholarships" element={<Scholarships />} />
                   <Route path="/scholarships/:id" element={<ScholarshipDetail />} />
+                  <Route path="/internships" element={<Internships />} />
+                  <Route path="/fellowships" element={<Fellowships />} />
+                  <Route path="/seminars" element={<Seminars />} />
+                  <Route path="/opportunity/:id" element={<ScholarshipDetail />} />
                   <Route path="/blog" element={<BlogPage />} />
                   <Route path="/blog/:id" element={<BlogDetail />} />
                   <Route path="/about" element={<About />} />

@@ -48,10 +48,11 @@ export const ManageScholarships: React.FC = () => {
   };
 
   // Form fields
+  const [opportunityType, setOpportunityType] = useState<'scholarship' | 'internship' | 'fellowship' | 'seminar'>('scholarship');
   const [title, setTitle] = useState('');
   const [hostUniversity, setHostUniversity] = useState('');
   const [description, setDescription] = useState('');
-  const [degreeLevel, setDegreeLevel] = useState<'BS' | 'MS' | 'PhD'>('MS');
+  const [degreeLevel, setDegreeLevel] = useState<string>('MS');
   const [country, setCountry] = useState('China');
   const [category, setCategory] = useState('Government');
   const [fundingType, setFundingType] = useState<'Full' | 'Partial'>('Full');
@@ -86,8 +87,9 @@ export const ManageScholarships: React.FC = () => {
 
   const openCreateModal = () => {
     setEditingId(null);
+    setOpportunityType('scholarship');
     setTitle('');
-    setHostUniversity('Tsinghua University / CSC Host Institution');
+    setHostUniversity('Tsinghua University / Host Institution');
     setDescription('Full scholarship for international students with high academic standing.');
     setDegreeLevel('MS');
     setCountry('China');
@@ -108,6 +110,7 @@ export const ManageScholarships: React.FC = () => {
 
   const openEditModal = (sch: Scholarship) => {
     setEditingId(sch._id);
+    setOpportunityType(sch.opportunityType || 'scholarship');
     setTitle(sch.title);
     setHostUniversity(sch.hostUniversity || 'Top Universities & Institutes');
     setDescription(sch.description);
@@ -136,6 +139,7 @@ export const ManageScholarships: React.FC = () => {
     }
 
     const payload = {
+      opportunityType,
       title,
       hostUniversity,
       description,
@@ -160,17 +164,17 @@ export const ManageScholarships: React.FC = () => {
 
       if (editingId) {
         await axios.put(`/api/scholarships/${editingId}`, payload);
-        showToast(`Scholarship "${title}" updated successfully!`, 'success');
+        showToast(`Opportunity "${title}" updated successfully!`, 'success');
       } else {
         await axios.post('/api/scholarships', payload);
-        showToast(`New scholarship "${title}" added successfully!`, 'success');
+        showToast(`New opportunity "${title}" added successfully!`, 'success');
       }
 
       setShowModal(false);
       fetchScholarships();
     } catch (err: any) {
       console.error('Save error', err);
-      setFormError(err.response?.data?.message || 'Failed to save scholarship');
+      setFormError(err.response?.data?.message || 'Failed to save opportunity');
     } finally {
       setSubmitting(false);
     }
@@ -262,6 +266,7 @@ export const ManageScholarships: React.FC = () => {
               <thead className="bg-slate-950/80 text-slate-400 uppercase tracking-[0.2em] font-bold text-[10px] border-b border-slate-800/80">
                 <tr>
                   <th className="p-4">Image</th>
+                  <th className="p-4">Type</th>
                   <th className="p-4">Title</th>
                   <th className="p-4">Degree</th>
                   <th className="p-4">Country</th>
@@ -283,6 +288,19 @@ export const ManageScholarships: React.FC = () => {
                           (e.target as HTMLImageElement).src = '/uploads/default-scholarship.jpg';
                         }}
                       />
+                    </td>
+                    <td className="p-4 font-extrabold uppercase text-[10px]">
+                      <span className={`px-2 py-0.5 rounded-lg border ${
+                        sch.opportunityType === 'internship'
+                          ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30'
+                          : sch.opportunityType === 'fellowship'
+                          ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                          : sch.opportunityType === 'seminar'
+                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                          : 'bg-[#D4AF37]/10 text-[#D4AF37] border-[#D4AF37]/30'
+                      }`}>
+                        {sch.opportunityType || 'scholarship'}
+                      </span>
                     </td>
                     <td className="p-4 font-semibold text-white max-w-xs truncate">
                       {sch.title}
@@ -406,26 +424,41 @@ export const ManageScholarships: React.FC = () => {
                 <AdBanner placement="in-feed" className="my-1" />
               </div>
 
+              <div>
+                <label className="block text-[10px] font-bold text-amber-400 uppercase tracking-[0.2em] mb-1">Opportunity Type</label>
+                <select
+                  required
+                  value={opportunityType}
+                  onChange={(e) => setOpportunityType(e.target.value as any)}
+                  className="w-full px-3.5 py-2.5 bg-slate-950/80 border border-amber-500/50 rounded-2xl text-xs text-white font-bold focus:outline-none focus:border-[#D4AF37]"
+                >
+                  <option value="scholarship">🎓 Scholarship (Degree / Grant Program)</option>
+                  <option value="internship">💼 Internship (Paid / Lab Placement)</option>
+                  <option value="fellowship">🌟 Fellowship (Research / Leadership)</option>
+                  <option value="seminar">🌍 International Seminar (Summit / Forum)</option>
+                </select>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] mb-1">Scholarship Title</label>
+                  <label className="block text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] mb-1">Title</label>
                   <input
                     type="text"
                     required
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g. Chinese Government Scholarship (CSC)"
+                    placeholder="e.g. CERN Openlab Summer Student Program 2026"
                     className="w-full px-3.5 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] mb-1">Host University / Institute</label>
+                  <label className="block text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] mb-1">Host University / Institute / Host Org</label>
                   <input
                     type="text"
                     value={hostUniversity}
                     onChange={(e) => setHostUniversity(e.target.value)}
-                    placeholder="e.g. Tsinghua University / CSC Partner Universities"
+                    placeholder="e.g. CERN / Max Planck / United Nations"
                     className="w-full px-3.5 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
@@ -433,15 +466,18 @@ export const ManageScholarships: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] mb-1">Degree Level</label>
+                  <label className="block text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] mb-1">Target Academic Level</label>
                   <select
                     value={degreeLevel}
-                    onChange={(e) => setDegreeLevel(e.target.value as any)}
+                    onChange={(e) => setDegreeLevel(e.target.value)}
                     className="w-full px-3 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-2xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
                   >
                     <option value="BS">BS (Bachelors)</option>
                     <option value="MS">MS (Masters)</option>
                     <option value="PhD">PhD (Doctorate)</option>
+                    <option value="PostDoc">PostDoc / Research</option>
+                    <option value="High School">High School / Youth</option>
+                    <option value="All Levels">All Academic Levels</option>
                   </select>
                 </div>
 

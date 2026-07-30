@@ -9,13 +9,14 @@ export interface User {
 
 export interface Scholarship {
   _id: string;
+  opportunityType?: 'scholarship' | 'internship' | 'fellowship' | 'seminar';
   title: string;
   description: string;
   hostUniversity?: string;
-  degreeLevel: 'BS' | 'MS' | 'PhD';
+  degreeLevel: string;
   country: string;
   category: string;
-  fundingType: 'Full' | 'Partial';
+  fundingType: string;
   financialCoverage?: string;
   eligibilityCriteria?: string;
   requiredDocuments?: string;

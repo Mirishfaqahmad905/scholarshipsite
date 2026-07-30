@@ -12,13 +12,19 @@ const isDbConnected = () => mongoose.connection.readyState === 1;
 // @route   GET /api/scholarships
 // @access  Public
 export const getScholarships = async (req, res) => {
-  const { degreeLevel, country, category, fundingType, search, status } = req.query;
+  const { degreeLevel, country, category, fundingType, search, status, opportunityType, type } = req.query;
+  const targetType = opportunityType || type;
 
   // In-memory store fallback when DB is disconnected
   if (!isDbConnected()) {
     const store = getStore(req);
     let scholarships = [...store.scholarships];
 
+    if (targetType && targetType !== 'All') {
+      scholarships = scholarships.filter(
+        (s) => (s.opportunityType || 'scholarship').toLowerCase() === targetType.toLowerCase()
+      );
+    }
     if (degreeLevel && degreeLevel !== 'All') {
       scholarships = scholarships.filter(
         (s) => s.degreeLevel.toUpperCase() === degreeLevel.toUpperCase()
@@ -60,6 +66,9 @@ export const getScholarships = async (req, res) => {
   try {
     const query = {};
 
+    if (targetType && targetType !== 'All') {
+      query.opportunityType = targetType.toLowerCase();
+    }
     if (degreeLevel && degreeLevel !== 'All') {
       query.degreeLevel = degreeLevel;
     }
@@ -123,6 +132,7 @@ export const getScholarshipById = async (req, res) => {
 // @access  Private/Admin
 export const createScholarship = async (req, res) => {
   const {
+    opportunityType,
     title,
     description,
     hostUniversity,
@@ -141,15 +151,16 @@ export const createScholarship = async (req, res) => {
     status,
   } = req.body;
 
-  if (!title || !description || !degreeLevel || !country || !category || !deadline) {
-    return res.status(400).json({ message: 'Please provide all required scholarship fields' });
+  if (!title || !description || !country || !category || !deadline) {
+    return res.status(400).json({ message: 'Please provide all required fields' });
   }
 
   const newScholarship = {
+    opportunityType: opportunityType || 'scholarship',
     title,
     description,
     hostUniversity: hostUniversity || 'Top Universities & Institutions',
-    degreeLevel,
+    degreeLevel: degreeLevel || 'All Levels',
     country,
     category,
     fundingType: fundingType || 'Full',
@@ -164,32 +175,44 @@ export const createScholarship = async (req, res) => {
     status: status || 'open',
   };
 
+  const store = getStore(req);
+
   if (!isDbConnected()) {
-    const store = getStore(req);
     const created = {
       _id: 'sch-' + Date.now(),
       ...newScholarship,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    store.scholarships.unshift(created);
+    if (store && store.scholarships) {
+      store.scholarships.unshift(created);
+    }
     await notifySubscribersNewScholarship(req, created);
     return res.status(201).json(created);
   }
 
   try {
-    const scholarship = await Scholarship.create(newScholarship);
+    const scholarship = await Scholarship.create({
+      _id: 'sch-' + Date.now(),
+      ...newScholarship,
+    });
+    const createdObj = scholarship.toObject ? scholarship.toObject() : scholarship;
+    if (store && store.scholarships) {
+      store.scholarships.unshift(createdObj);
+    }
     await notifySubscribersNewScholarship(req, scholarship);
     return res.status(201).json(scholarship);
   } catch (error) {
-    const store = getStore(req);
+    console.error('MongoDB create error, using memory fallback:', error.message);
     const created = {
       _id: 'sch-' + Date.now(),
       ...newScholarship,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    store.scholarships.unshift(created);
+    if (store && store.scholarships) {
+      store.scholarships.unshift(created);
+    }
     await notifySubscribersNewScholarship(req, created);
     return res.status(201).json(created);
   }
@@ -202,18 +225,30 @@ export const updateScholarship = async (req, res) => {
   const { id } = req.params;
   const store = getStore(req);
 
+  const updateFields = { ...req.body };
+  if (updateFields.deadline) {
+    updateFields.deadline = new Date(updateFields.deadline);
+  }
+
   // Sync in-memory store
-  const index = store.scholarships.findIndex((s) => s._id === id || s._id?.toString() === id.toString());
-  if (index !== -1) {
-    store.scholarships[index] = {
-      ...store.scholarships[index],
-      ...req.body,
-      updatedAt: new Date(),
-    };
+  if (store && store.scholarships) {
+    const index = store.scholarships.findIndex(
+      (s) => s._id === id || s._id?.toString() === id.toString()
+    );
+    if (index !== -1) {
+      store.scholarships[index] = {
+        ...store.scholarships[index],
+        ...updateFields,
+        updatedAt: new Date(),
+      };
+    }
   }
 
   if (!isDbConnected()) {
-    if (index !== -1) return res.json(store.scholarships[index]);
+    const item = store?.scholarships?.find(
+      (s) => s._id === id || s._id?.toString() === id.toString()
+    );
+    if (item) return res.json(item);
     return res.status(404).json({ message: 'Scholarship not found' });
   }
 
@@ -227,15 +262,21 @@ export const updateScholarship = async (req, res) => {
     }
 
     if (scholarship) {
-      Object.assign(scholarship, req.body);
+      Object.assign(scholarship, updateFields);
       const updated = await scholarship.save();
       return res.json(updated);
     }
 
-    if (index !== -1) return res.json(store.scholarships[index]);
+    const item = store?.scholarships?.find(
+      (s) => s._id === id || s._id?.toString() === id.toString()
+    );
+    if (item) return res.json(item);
     return res.status(404).json({ message: 'Scholarship not found' });
   } catch (error) {
-    if (index !== -1) return res.json(store.scholarships[index]);
+    const item = store?.scholarships?.find(
+      (s) => s._id === id || s._id?.toString() === id.toString()
+    );
+    if (item) return res.json(item);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -247,26 +288,26 @@ export const deleteScholarship = async (req, res) => {
   const { id } = req.params;
   const store = getStore(req);
 
-  // Sync in-memory store
+  // 1. Permanently remove from in-memory store
   if (store && store.scholarships) {
     store.scholarships = store.scholarships.filter(
       (s) => s._id !== id && s._id?.toString() !== id.toString()
     );
   }
 
-  if (!isDbConnected()) {
-    return res.json({ message: 'Scholarship deleted successfully' });
+  // 2. Permanently delete from MongoDB if connected
+  if (isDbConnected()) {
+    try {
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        await Scholarship.findByIdAndDelete(id);
+      }
+      await Scholarship.deleteOne({ _id: id });
+    } catch (error) {
+      console.warn('MongoDB delete notice:', error.message);
+    }
   }
 
-  try {
-    if (mongoose.Types.ObjectId.isValid(id)) {
-      await Scholarship.findByIdAndDelete(id);
-    }
-    await Scholarship.deleteOne({ _id: id });
-    return res.json({ message: 'Scholarship deleted successfully' });
-  } catch (error) {
-    return res.json({ message: 'Scholarship deleted successfully' });
-  }
+  return res.json({ message: 'Scholarship deleted successfully', id });
 };
 
 // @desc    Get Categories and Countries list
