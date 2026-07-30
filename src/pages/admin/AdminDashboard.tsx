@@ -5,6 +5,8 @@ import { DashboardStats } from '../../types';
 import {
   LayoutDashboard,
   GraduationCap,
+  Briefcase,
+  Award,
   BookOpen,
   Megaphone,
   Users,
@@ -43,6 +45,8 @@ export const AdminDashboard: React.FC = () => {
   const navItems = [
     { label: 'Overview', path: '/admin', icon: LayoutDashboard },
     { label: 'Scholarships', path: '/admin/scholarships', icon: GraduationCap },
+    { label: 'Internships', path: '/admin/internships', icon: Briefcase },
+    { label: 'Fellowships', path: '/admin/fellowships', icon: Award },
     { label: 'Blog Articles', path: '/admin/blogs', icon: BookOpen },
     { label: 'Ad Banners', path: '/admin/ads', icon: Megaphone },
     { label: 'Subscribers & Alerts', path: '/admin/subscribers', icon: Mail },

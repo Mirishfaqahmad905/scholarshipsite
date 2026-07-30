@@ -23,6 +23,8 @@ import { Register } from './pages/Register';
 
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { ManageScholarships } from './pages/admin/ManageScholarships';
+import { ManageInternships } from './pages/admin/ManageInternships';
+import { ManageFellowships } from './pages/admin/ManageFellowships';
 import { ManageBlogs } from './pages/admin/ManageBlogs';
 import { ManageAds } from './pages/admin/ManageAds';
 import { ManageUsers } from './pages/admin/ManageUsers';
@@ -61,6 +63,8 @@ export default function App() {
                   <Route element={<PrivateRoute adminOnly={true} />}>
                     <Route path="/admin" element={<AdminDashboard />}>
                       <Route path="scholarships" element={<ManageScholarships />} />
+                      <Route path="internships" element={<ManageInternships />} />
+                      <Route path="fellowships" element={<ManageFellowships />} />
                       <Route path="blogs" element={<ManageBlogs />} />
                       <Route path="ads" element={<ManageAds />} />
                       <Route path="subscribers" element={<ManageSubscribers />} />
