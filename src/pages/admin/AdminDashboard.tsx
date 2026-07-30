@@ -18,6 +18,7 @@ import {
   Share2,
   Mail,
   Search,
+  Database,
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
