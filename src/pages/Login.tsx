@@ -51,31 +51,6 @@ export const Login: React.FC = () => {
 
         {/* Login Form */}
         <div className="bg-slate-900/60 border border-slate-800/80 p-6 sm:p-8 rounded-3xl shadow-2xl backdrop-blur-md">
-          {/* Admin Credentials Quick Hint */}
-          <div className="p-3.5 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-2xl text-slate-200 text-xs mb-5 space-y-2">
-            <div className="flex items-center justify-between font-bold text-[#D4AF37]">
-              <span className="flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5" />
-                Default Admin Access
-              </span>
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail('admin');
-                  setPassword('AAshfAAq123@');
-                  setError(null);
-                }}
-                className="text-[10px] font-sans font-bold uppercase tracking-wider bg-[#D4AF37] hover:bg-[#e0bc46] text-slate-950 px-2.5 py-1 rounded-xl transition-all shadow-md active:scale-95"
-              >
-                Auto-fill Admin
-              </button>
-            </div>
-            <div className="text-[11px] space-y-1 text-slate-300 font-mono">
-              <div><span className="text-slate-400 font-sans">Username:</span> <strong className="text-amber-300">admin</strong> <span className="text-slate-500 font-sans">or</span> <strong className="text-amber-300">admin@scholarship.org</strong></div>
-              <div><span className="text-slate-400 font-sans">Password:</span> <strong className="text-amber-300">AAshfAAq123@</strong></div>
-            </div>
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs flex items-center gap-2">
