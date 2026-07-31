@@ -216,6 +216,8 @@ const connectDB = async () => {
     return mongoose.connection;
   }
 
+  mongoose.set('bufferCommands', false);
+
   const uri =
     process.env.MONGODB_URI ||
     process.env.MONGO_URI ||

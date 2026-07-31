@@ -92,7 +92,11 @@ export const getScholarships = async (req, res) => {
       ];
     }
 
-    const scholarships = await Scholarship.find(query).sort({ createdAt: -1 });
+    let scholarships = await Scholarship.find(query).sort({ createdAt: -1 });
+    if (scholarships.length === 0 && (!search && (!degreeLevel || degreeLevel === 'All') && (!country || country === 'All') && (!category || category === 'All'))) {
+      const store = getStore(req);
+      scholarships = store.scholarships;
+    }
     return res.json(scholarships);
   } catch (error) {
     const store = getStore(req);
