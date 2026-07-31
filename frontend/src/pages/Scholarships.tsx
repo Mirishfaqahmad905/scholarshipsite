@@ -8,12 +8,31 @@ import { AdBanner } from '../components/AdBanner';
 import { GraduationCap, Sparkles, AlertCircle } from 'lucide-react';
 
 export const Scholarships: React.FC = () => {
+  return <ScholarshipsList title="Scholarships" defaultCategory="All" />;
+};
+
+export const Internships: React.FC = () => {
+  return <ScholarshipsList title="Internships & Training" defaultCategory="Internship" />;
+};
+
+export const Fellowships: React.FC = () => {
+  return <ScholarshipsList title="Fellowships & Grants" defaultCategory="Fellowship" />;
+};
+
+export const Seminars: React.FC = () => {
+  return <ScholarshipsList title="Conferences & Seminars" defaultCategory="Seminar" />;
+};
+
+const ScholarshipsList: React.FC<{ title?: string; defaultCategory?: string }> = ({
+  title = 'Scholarships',
+  defaultCategory = 'All',
+}) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [search, setSearch] = useState<string>(searchParams.get('search') || '');
   const [degreeLevel, setDegreeLevel] = useState<string>(searchParams.get('degreeLevel') || 'All');
   const [country, setCountry] = useState<string>(searchParams.get('country') || 'All');
-  const [category, setCategory] = useState<string>(searchParams.get('category') || 'All');
+  const [category, setCategory] = useState<string>(searchParams.get('category') || defaultCategory);
   const [fundingType, setFundingType] = useState<string>(searchParams.get('fundingType') || 'All');
   const [status, setStatus] = useState<string>(searchParams.get('status') || 'All');
 

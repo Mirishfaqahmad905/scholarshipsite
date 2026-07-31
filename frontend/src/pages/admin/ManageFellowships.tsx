@@ -124,7 +124,6 @@ export const ManageFellowships: React.FC = () => {
     setOfficialLink('');
     setApplyLink('');
     setImage('/uploads/rotary-peace.svg');
-    setDescription('');
     setStatus('open');
     setFormError(null);
     setShowModal(true);
