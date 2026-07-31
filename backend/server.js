@@ -61,19 +61,26 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   });
 });
 
-// API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/scholarships', scholarshipRoutes);
-app.use('/api/internships', internshipRoutes);
-app.use('/api/fellowships', fellowshipRoutes);
-app.use('/api/seminars', seminarRoutes);
-app.use('/api/blogs', blogRoutes);
-app.use('/api/ads', adRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/settings', settingRoutes);
-app.use('/api/subscribers', subscriberRoutes);
-app.use('/api/contact', contactRoutes);
-app.use('/api/seo', seoRoutes);
+// API Routes (Mounted at both /api/path and /path for maximum serverless gateway compatibility)
+const apiRoutesMap = [
+  ['/auth', authRoutes],
+  ['/scholarships', scholarshipRoutes],
+  ['/internships', internshipRoutes],
+  ['/fellowships', fellowshipRoutes],
+  ['/seminars', seminarRoutes],
+  ['/blogs', blogRoutes],
+  ['/ads', adRoutes],
+  ['/users', userRoutes],
+  ['/settings', settingRoutes],
+  ['/subscribers', subscriberRoutes],
+  ['/contact', contactRoutes],
+  ['/seo', seoRoutes],
+];
+
+apiRoutesMap.forEach(([routePath, routeHandler]) => {
+  app.use(`/api${routePath}`, routeHandler);
+  app.use(routePath, routeHandler);
+});
 
 // Direct SEO Public Endpoints
 app.get('/robots.txt', (req, res, next) => {
