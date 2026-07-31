@@ -1,5 +1,5 @@
 {
-  "name": "Scholarship Portal",
+  "name": "Scholarship Opportunity",
   "description": "Comprehensive scholarship portal with BS, MS, PhD listings, searchable countries, categories, blog, ad management, and admin dashboard.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "tsx server.ts",
     "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "build:no-cache": "npm run clean && npm run build",
     "start": "node dist/server.cjs",
     "clean": "rm -rf dist server.js",
+    "deploy:verify": "node scripts/verify-deployment.js",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
@@ -27,6 +29,7 @@
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
     "react-router-dom": "^7.18.1",
+    "recharts": "^3.10.1",
     "vite": "^6.2.3"
   },
   "devDependencies": {

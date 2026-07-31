@@ -113,6 +113,7 @@ export interface SiteSettings {
   _id?: string;
   siteName: string;
   siteLink: string;
+  siteLogoUrl?: string;
   contactEmail: string;
   whatsapp: string;
   whatsappMessage?: string;

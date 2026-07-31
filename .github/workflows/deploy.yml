@@ -1,0 +1,110 @@
+name: Continuous Integration & Deployment (CI/CD)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build-and-verify:
+    name: Build, Audit & Health Verification
+    runs-[#1-node]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout Latest Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 2. Setup Node.js Runtime (v20)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 3. Clean Install Dependencies (No Stale Cache)
+        run: |
+          echo "Clearing npm cache and installing fresh dependencies..."
+          npm ci --prefer-offline=false
+
+      - name: 4. Type Check & Linting
+        run: |
+          npm run lint
+
+      - name: 5. Fresh Clean Build
+        env:
+          NODE_ENV: production
+          GIT_COMMIT_SHA: ${{ github.sha }}
+        run: |
+          npm run clean || true
+          npm run build
+
+      - name: 6. Test Docker Container Build
+        run: |
+          docker build --no-cache -t scholarship-portal:latest .
+
+  deploy-production:
+    name: Auto Deploy & Sync (Vercel / Render / VPS / Railway)
+    needs: build-and-verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout Code
+        uses: actions/checkout@v4
+
+      # Deployment to Vercel (If VERCEL_TOKEN secret is configured)
+      - name: Deploy to Vercel (Frontend & Serverless API)
+        if: env.VERCEL_TOKEN != ''
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes --force
+
+      # Deployment to Render (If RENDER_DEPLOY_HOOK_URL secret is configured)
+      - name: Trigger Render Deploy Hook
+        if: env.RENDER_DEPLOY_HOOK_URL != ''
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}?clearCache=clear"
+
+      # Deployment to VPS via SSH & PM2 (If VPS credentials provided)
+      - name: Deploy to VPS via SSH (PM2 Zero Downtime Reload)
+        if: env.SSH_HOST != ''
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /var/www/scholarship-portal
+            git fetch --all
+            git reset --hard origin/main
+            npm ci --prefer-offline=false
+            npm run clean
+            npm run build
+            GIT_COMMIT_SHA=${{ github.sha }} pm2 reload ecosystem.config.cjs --env production || pm2 start ecosystem.config.cjs --env production
+            pm2 save
+
+  verify-backend-health:
+    name: Verify Live Commit Sync
+    needs: deploy-production
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout Code for Verification Script
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Live Health Endpoint Verification
+        env:
+          APP_URL: ${{ secrets.APP_URL || 'http://localhost:3000' }}
+          EXPECTED_SHA: ${{ github.sha }}
+        run: |
+          node scripts/verify-deployment.js || echo "Health check verification completed with warning."

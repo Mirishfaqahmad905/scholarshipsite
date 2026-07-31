@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSocial } from '../context/SocialContext';
+import { Logo } from './Logo';
 import {
-  GraduationCap,
   Mail,
   Phone,
   ShieldCheck,
@@ -20,8 +20,8 @@ import {
 export const Footer: React.FC = () => {
   const { settings } = useSocial();
 
-  const siteName = settings?.siteName || 'Scholarship Portal';
-  const siteLink = settings?.siteLink || 'https://scholarship-portal.vercel.app';
+  const siteName = settings?.siteName || 'Scholarship Opportunity';
+  const siteLink = settings?.siteLink || 'https://scholarship-opportunity.com';
   const contactEmail = settings?.contactEmail;
   const whatsapp = settings?.whatsapp;
   const whatsappMessage = settings?.whatsappMessage;
@@ -48,22 +48,8 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
           {/* Col 1 */}
           <div className="space-y-4 md:col-span-1">
-            <Link to="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37]">
-                <GraduationCap className="w-5 h-5" />
-              </div>
-              <span className="text-xl font-serif font-semibold text-white tracking-tight">
-                {siteName.includes(' ') ? (
-                  <>
-                    {siteName.split(' ')[0]}{' '}
-                    <span className="text-[#D4AF37] italic font-normal">
-                      {siteName.split(' ').slice(1).join(' ')}
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-white">{siteName}</span>
-                )}
-              </span>
+            <Link to="/" className="inline-block">
+              <Logo variant="full" size="md" />
             </Link>
             <p className="text-xs text-slate-400 leading-relaxed font-sans">
               Your premier portal for fully funded international scholarships, Chinese Government CSC grants, master fellowships, and PhD assistantships worldwide.

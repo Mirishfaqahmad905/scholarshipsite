@@ -20,6 +20,7 @@ router.get('/', async (req, res) => {
         setting = await Setting.create({
           siteName: 'Global Scholarship Portal',
           siteLink: 'https://scholarship-portal.vercel.app',
+          siteLogoUrl: '',
           contactEmail: 'techhub905@gmail.com',
           whatsapp: '+1234567890',
           whatsappMessage: 'Hello! I need scholarship assistance.',
@@ -49,6 +50,7 @@ router.get('/', async (req, res) => {
       _id: 'settings-global-1',
       siteName: 'Global Scholarship Portal',
       siteLink: 'https://scholarship-portal.vercel.app',
+      siteLogoUrl: '',
       contactEmail: 'techhub905@gmail.com',
       whatsapp: '+1234567890',
       whatsappMessage: 'Hello! I need scholarship assistance.',
@@ -77,6 +79,7 @@ router.put('/', protect, admin, async (req, res) => {
   const {
     siteName,
     siteLink,
+    siteLogoUrl,
     contactEmail,
     whatsapp,
     whatsappMessage,
@@ -97,6 +100,7 @@ router.put('/', protect, admin, async (req, res) => {
   const updateData = {
     siteName: siteName || 'Global Scholarship Portal',
     siteLink: siteLink || 'https://scholarship-portal.vercel.app',
+    siteLogoUrl: siteLogoUrl !== undefined ? siteLogoUrl : '',
     contactEmail: contactEmail || '',
     whatsapp: whatsapp || '',
     whatsappMessage: whatsappMessage || 'Hello! I need scholarship assistance.',

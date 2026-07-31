@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ThemeToggle } from './ThemeToggle';
-import { GraduationCap, LayoutDashboard, LogOut, Menu, X, User as UserIcon, BookOpen, Compass, Sparkles } from 'lucide-react';
+import { Logo } from './Logo';
+import { LayoutDashboard, LogOut, Menu, X, User as UserIcon, BookOpen, Compass, Sparkles } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const { user, logout, isAdmin } = useAuth();
@@ -20,18 +21,10 @@ export const Navbar: React.FC = () => {
   return (
     <nav className="sticky top-0 z-50 bg-[#0b1120]/90 backdrop-blur-md border-b border-slate-800/80 text-slate-100 shadow-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-18">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] group-hover:bg-[#D4AF37] group-hover:text-slate-950 transition-all duration-300 shadow-inner">
-              <GraduationCap className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="text-xl font-serif font-semibold tracking-tight text-white flex items-center gap-1">
-                Scholarship<span className="text-[#D4AF37] italic font-normal">Portal</span>
-              </span>
-              <span className="block text-[9px] text-slate-400 tracking-[0.2em] uppercase font-semibold">Verified International Grants</span>
-            </div>
+          <Link to="/" className="flex items-center shrink-0">
+            <Logo variant="full" size="md" />
           </Link>
 
           {/* Desktop Navigation Links */}

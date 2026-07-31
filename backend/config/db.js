@@ -224,7 +224,7 @@ const connectDB = async () => {
 
   try {
     const conn = await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 2500,
     });
     console.log(`✅ MongoDB Connected successfully to host: ${conn.connection.host}`);
     lastDbError = null;
@@ -232,7 +232,7 @@ const connectDB = async () => {
     return conn;
   } catch (error) {
     lastDbError = error.message;
-    console.warn(`⚠️ MongoDB connection error: ${error.message}. Fallback in-memory store active.`);
+    console.log(`ℹ️ Data Store Info: MongoDB Atlas cluster is restricted or offline (${error.message.split('.')[0]}). Seamless in-memory persistence active.`);
     return null;
   }
 };

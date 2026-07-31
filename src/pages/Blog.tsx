@@ -41,7 +41,7 @@ export const BlogPage: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[11px] font-bold uppercase tracking-[0.2em] mb-3">
               <BookOpen className="w-3.5 h-3.5 text-[#D4AF37]" />
-              <span>Scholarship Portal Journal</span>
+              <span>Scholarship Opportunity Journal</span>
             </div>
             <h1 className="text-3xl sm:text-5xl font-serif font-semibold text-white">
               Articles & <span className="italic font-normal text-[#D4AF37]">Application Guides</span>

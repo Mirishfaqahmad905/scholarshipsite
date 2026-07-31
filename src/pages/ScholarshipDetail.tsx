@@ -118,7 +118,7 @@ export const ScholarshipDetail: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#0b1120] text-slate-100 py-10 px-4 sm:px-6 lg:px-8">
       <SEO
-        title={`${scholarship.title} (${scholarship.degreeLevel}) — ${scholarship.country}`}
+        title={`${scholarship.title} (${scholarship.degreeLevel}) in ${scholarship.country} — Scholarship Opportunity`}
         description={scholarship.description.slice(0, 160)}
         keywords={`${scholarship.title}, ${scholarship.degreeLevel} scholarship, ${scholarship.country} scholarship, CSC grant`}
         image={scholarship.image}

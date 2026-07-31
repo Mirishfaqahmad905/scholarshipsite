@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'motion/react';
 import { Scholarship as Fellowship } from '../../types';
 import { ImageUploader } from '../../components/ImageUploader';
 import { WORLD_COUNTRIES } from '../../data/countries';
@@ -21,6 +22,7 @@ import {
   AlertTriangle,
   Loader2,
   Sparkles,
+  Zap,
 } from 'lucide-react';
 
 export const ManageFellowships: React.FC = () => {
@@ -88,8 +90,7 @@ export const ManageFellowships: React.FC = () => {
     fetchFellowships();
   }, []);
 
-  const openCreateModal = () => {
-    setEditingId(null);
+  const loadExamplePreset = () => {
     setTitle('Rotary Peace Fellowship Program 2026');
     setFoundationOrInst('Rotary International Foundation');
     setCountry('Australia');
@@ -105,6 +106,25 @@ export const ManageFellowships: React.FC = () => {
     setApplyLink('https://www.rotary.org/en/our-programs/peace-fellowships');
     setImage('/uploads/rotary-peace.svg');
     setDescription('Fully funded master degree and certificate fellowships in peace, conflict resolution, and international development.');
+  };
+
+  const openCreateModal = () => {
+    setEditingId(null);
+    setTitle('');
+    setFoundationOrInst('');
+    setCountry('Australia');
+    setDegreeLevel('MS / Certificate');
+    setCategory('Leadership Fellowship');
+    setFundingType('Full');
+    setFinancialCoverage('');
+    setEligibilityCriteria('');
+    setRequiredDocuments('');
+    setApplicationFee('');
+    setDeadline('');
+    setOfficialLink('');
+    setApplyLink('');
+    setImage('/uploads/rotary-peace.svg');
+    setDescription('');
     setStatus('open');
     setFormError(null);
     setShowModal(true);
@@ -466,17 +486,42 @@ export const ManageFellowships: React.FC = () => {
       )}
 
       {/* Add / Edit Fellowship Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-5 shadow-2xl my-8">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="text-xl font-serif font-semibold text-white">
-                {editingId ? 'Edit Fellowship' : 'Add New Fellowship'}
-              </h3>
-              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-white">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      <AnimatePresence>
+        {showModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.2 }}
+              className="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-5 shadow-2xl my-8 text-left"
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div>
+                  <h3 className="text-xl font-serif font-semibold text-white">
+                    {editingId ? 'Edit Fellowship' : 'Add New Fellowship'}
+                  </h3>
+                  <p className="text-xs text-slate-400 font-sans mt-0.5">
+                    {editingId ? 'Modify fellowship details' : 'Enter clean fellowship details to add to database'}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {!editingId && (
+                    <button
+                      type="button"
+                      onClick={loadExamplePreset}
+                      className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-400/30 text-[11px] font-bold rounded-xl transition-all flex items-center gap-1.5"
+                      title="Quick fill with sample data"
+                    >
+                      <Zap className="w-3.5 h-3.5" />
+                      <span>Auto-Fill Demo</span>
+                    </button>
+                  )}
+                  <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
 
             {formError && (
               <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-rose-400 text-xs flex items-center gap-2">
@@ -722,9 +767,10 @@ export const ManageFellowships: React.FC = () => {
                 </button>
               </div>
             </form>
-          </div>
+          </motion.div>
         </div>
       )}
+    </AnimatePresence>
     </div>
   );
 };

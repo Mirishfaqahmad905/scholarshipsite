@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSocial } from '../../context/SocialContext';
 import { CustomSocialLink } from '../../types';
+import { ImageUploader } from '../../components/ImageUploader';
+import { Logo } from '../../components/Logo';
 import {
   Share2,
   Mail,
@@ -31,6 +33,7 @@ export const ManageSettings: React.FC = () => {
 
   const [siteName, setSiteName] = useState('');
   const [siteLink, setSiteLink] = useState('');
+  const [siteLogoUrl, setSiteLogoUrl] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [whatsappMessage, setWhatsappMessage] = useState('');
@@ -55,6 +58,7 @@ export const ManageSettings: React.FC = () => {
     if (settings) {
       setSiteName(settings.siteName || '');
       setSiteLink(settings.siteLink || '');
+      setSiteLogoUrl(settings.siteLogoUrl || '');
       setContactEmail(settings.contactEmail || '');
       setWhatsapp(settings.whatsapp || '');
       setWhatsappMessage(settings.whatsappMessage || '');
@@ -100,6 +104,7 @@ export const ManageSettings: React.FC = () => {
       const ok = await updateSettings({
         siteName,
         siteLink,
+        siteLogoUrl,
         contactEmail,
         whatsapp,
         whatsappMessage,
@@ -221,6 +226,35 @@ export const ManageSettings: React.FC = () => {
                   onChange={(e) => setSiteLink(e.target.value)}
                   placeholder="https://scholarship-portal.vercel.app"
                   className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#D4AF37]"
+                />
+              </div>
+            </div>
+
+            {/* Scholarship Logo Setting & Upload */}
+            <div className="pt-3 border-t border-slate-800/80 space-y-3">
+              <label className="block text-xs font-bold text-[#D4AF37] uppercase tracking-wider">
+                Scholarship Portal Brand Logo Setting
+              </label>
+              <p className="text-[11px] text-slate-400">
+                Upload a custom logo image file (PNG, SVG, WEBP, JPG) or paste a direct image URL. The uploaded logo will automatically sync to your database and update across all portal headers, footers, and brand badges instantly.
+              </p>
+              
+              <ImageUploader
+                value={siteLogoUrl}
+                onChange={(url) => setSiteLogoUrl(url)}
+                label="Upload Scholarship Logo File (PNG/SVG/Base64)"
+              />
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                  Or Direct Logo Image URL (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={siteLogoUrl}
+                  onChange={(e) => setSiteLogoUrl(e.target.value)}
+                  placeholder="https://example.com/logo.png or data:image/png;base64,..."
+                  className="w-full px-3.5 py-2 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-[#D4AF37]"
                 />
               </div>
             </div>
@@ -557,10 +591,20 @@ export const ManageSettings: React.FC = () => {
               Frontend Live Preview
             </h3>
 
+            {/* Active Header Logo Preview */}
+            <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl space-y-3">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-[#D4AF37]">
+                1. Portal Header Logo Preview
+              </div>
+              <div className="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex items-center justify-between">
+                <Logo size="md" />
+              </div>
+            </div>
+
             {/* Simulated Floating WhatsApp / Contact Card */}
             <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl space-y-3">
               <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                1. WhatsApp Direct Chat Button
+                2. WhatsApp Direct Chat Button
               </div>
               {whatsapp ? (
                 <a

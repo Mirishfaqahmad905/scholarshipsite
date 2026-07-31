@@ -4,6 +4,7 @@ const settingSchema = new mongoose.Schema(
   {
     siteName: { type: String, default: 'Global Scholarship Portal' },
     siteLink: { type: String, default: 'https://scholarship-portal.vercel.app' },
+    siteLogoUrl: { type: String, default: '' },
     contactEmail: { type: String, default: 'techhub905@gmail.com' },
     whatsapp: { type: String, default: '+1234567890' },
     whatsappMessage: { type: String, default: 'Hello! I need scholarship application assistance.' },

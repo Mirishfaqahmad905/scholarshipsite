@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Ad } from '../types';
+import { useSocial } from '../context/SocialContext';
 import { ExternalLink, Sparkles } from 'lucide-react';
 
 interface AdBannerProps {
@@ -14,11 +15,16 @@ interface AdBannerProps {
     | 'scholarship-detail-bottom'
     | 'blog-sidebar';
   className?: string;
+  adSlotId?: string;
 }
 
-export const AdBanner: React.FC<AdBannerProps> = ({ placement, className = '' }) => {
+export const AdBanner: React.FC<AdBannerProps> = ({ placement, className = '', adSlotId }) => {
+  const { settings } = useSocial();
   const [ad, setAd] = useState<Ad | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const publisherId = settings?.googleAdSensePublisherId?.trim();
+  const pubClient = publisherId ? (publisherId.startsWith('ca-pub-') ? publisherId : `ca-pub-${publisherId}`) : '';
 
   useEffect(() => {
     const fetchAd = async () => {
@@ -43,9 +49,37 @@ export const AdBanner: React.FC<AdBannerProps> = ({ placement, className = '' })
     fetchAd();
   }, [placement]);
 
+  useEffect(() => {
+    // If using Google AdSense unit
+    if (pubClient && (adSlotId || (ad as any)?.googleAdSlotId)) {
+      try {
+        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+      } catch (e) {
+        // ignore duplicate pushes
+      }
+    }
+  }, [pubClient, adSlotId, ad]);
+
   if (loading) {
     return (
       <div className={`animate-pulse bg-slate-800/40 rounded-xl h-16 w-full ${className}`} />
+    );
+  }
+
+  // Google AdSense Unit Render if Publisher ID + Slot ID present
+  const activeAdSlot = adSlotId || (ad as any)?.googleAdSlotId;
+  if (pubClient && activeAdSlot) {
+    return (
+      <div className={`w-full my-4 overflow-hidden text-center ${className}`}>
+        <div className="text-[9px] uppercase tracking-[0.2em] text-slate-400 mb-1 font-semibold">Advertisement</div>
+        <ins
+          className="adsbygoogle block"
+          data-ad-client={pubClient}
+          data-ad-slot={activeAdSlot}
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
+      </div>
     );
   }
 
@@ -66,7 +100,7 @@ export const AdBanner: React.FC<AdBannerProps> = ({ placement, className = '' })
                   Sponsor
                 </span>
                 <span className="text-xs sm:text-sm font-semibold text-white group-hover:text-[#D4AF37] transition-colors">
-                  IELTS & TOEFL Academic Prep Accelerator — Exclusive 30% Off Student Discount
+                  IELTS & TOEFL Academic Prep Accelerator — Exclusive Student Discount Available
                 </span>
               </div>
               <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#D4AF37] shrink-0">
@@ -123,6 +157,33 @@ export const AdBanner: React.FC<AdBannerProps> = ({ placement, className = '' })
       );
     }
 
+    if (placement === 'in-feed') {
+      return (
+        <div className={`w-full my-4 ${className}`}>
+          <a
+            href="https://www.duolingo.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block bg-slate-900/60 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl transition-all group"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="px-2 py-1 text-[9px] font-bold uppercase tracking-widest bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded">
+                  Sponsored
+                </span>
+                <span className="text-xs font-medium text-slate-200 group-hover:text-white">
+                  Duolingo English Test — Accepted by 4,000+ Universities Worldwide
+                </span>
+              </div>
+              <span className="text-xs text-emerald-400 font-bold flex items-center gap-1 shrink-0">
+                Learn More <ExternalLink className="w-3 h-3" />
+              </span>
+            </div>
+          </a>
+        </div>
+      );
+    }
+
     return null;
   }
 
@@ -153,3 +214,4 @@ export const AdBanner: React.FC<AdBannerProps> = ({ placement, className = '' })
     </div>
   );
 };
+

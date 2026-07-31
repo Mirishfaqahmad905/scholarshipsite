@@ -31,7 +31,7 @@ export const About: React.FC = () => {
   const whatsapp = settings?.whatsapp || '+92-346-3079238';
   const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, '');
   const whatsappUrl = `https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent(
-    'Hello Mir Ishfaq Ahmad! I am reaching out from the Scholarship Portal.'
+    'Hello Mir Ishfaq Ahmad! I am reaching out from Scholarship Opportunity.'
   )}`;
 
   return (
@@ -66,7 +66,7 @@ export const About: React.FC = () => {
             <div className="space-y-4 text-center lg:text-left flex-1">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-bold uppercase tracking-widest">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Scholarship Portal Founder & Lead Director</span>
+                <span>Scholarship Opportunity Founder & Lead Director</span>
               </div>
 
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-white tracking-tight leading-tight">

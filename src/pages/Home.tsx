@@ -43,17 +43,17 @@ export const Home: React.FC = () => {
   const websiteSchema = {
     '@context': 'https://schema.org',
     '@type': 'EducationalOrganization',
-    name: 'Scholarship Portal',
-    url: 'https://scholarship-portal.vercel.app',
+    name: 'Scholarship Opportunity',
+    url: 'https://scholarship-opportunity.com',
     description: 'Verified global scholarships and CSC grants directory for BS, MS, and PhD students worldwide.',
   };
 
   return (
     <div className="min-h-screen bg-[#0b1120] text-slate-100 pb-20">
       <SEO
-        title="Global Scholarship Portal — CSC & Fully Funded Grants 2026"
-        description="Search thousands of fully funded international scholarships, Chinese Government CSC grants, and university funding for BS, MS, and PhD applicants."
-        keywords="scholarships 2026, CSC scholarship, fully funded study abroad, China CSC grant, degree scholarships"
+        title="Scholarship Opportunity — CSC & Fully Funded Grants 2026"
+        description="Search thousands of fully funded international scholarships, Chinese Government CSC grants, and university funding for BS, MS, and PhD applicants on Scholarship Opportunity."
+        keywords="scholarship opportunity, scholarships 2026, CSC scholarship, fully funded study abroad, China CSC grant, degree scholarships"
         schema={websiteSchema}
       />
       {/* Header Ad Slot */}

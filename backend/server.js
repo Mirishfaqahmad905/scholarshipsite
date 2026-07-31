@@ -89,12 +89,41 @@ app.get('/sitemap.xml', (req, res, next) => {
 // API Status & Health Check Endpoints
 app.get('/api', async (req, res) => {
   const dbStatus = await getDbStatus();
-  res.json({ message: 'Scholarship Portal API is active and running', status: 'ok', database: dbStatus });
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.json({
+    message: 'Scholarship Portal API is active and running',
+    status: 'ok',
+    database: dbStatus,
+    timestamp: new Date().toISOString()
+  });
 });
 
 app.get('/api/health', async (req, res) => {
   const dbStatus = await getDbStatus();
-  res.json({ status: 'ok', service: 'Scholarship Portal API', database: dbStatus });
+  const commitSha = process.env.GIT_COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || process.env.RENDER_GIT_COMMIT || process.env.RAILWAY_GIT_COMMIT_SHA || 'latest';
+  const deployedAt = process.env.DEPLOYED_AT || new Date().toISOString();
+
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.json({
+    status: 'ok',
+    service: 'Scholarship Portal API',
+    version: process.env.npm_package_version || '1.0.0',
+    commitSha,
+    deployedAt,
+    uptime: Math.floor(process.uptime()),
+    database: dbStatus,
+  });
+});
+
+app.get('/api/version', (req, res) => {
+  const commitSha = process.env.GIT_COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || process.env.RENDER_GIT_COMMIT || process.env.RAILWAY_GIT_COMMIT_SHA || 'latest';
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.json({
+    version: process.env.npm_package_version || '1.0.0',
+    commitSha,
+    environment: process.env.NODE_ENV || 'production',
+    timestamp: new Date().toISOString()
+  });
 });
 
 app.get('/api/db-status', async (req, res) => {

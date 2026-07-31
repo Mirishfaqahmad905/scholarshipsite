@@ -12,6 +12,7 @@ interface SocialContextType {
 const defaultSettings: SiteSettings = {
   siteName: 'Global Scholarship Portal',
   siteLink: 'https://scholarship-portal.vercel.app',
+  siteLogoUrl: '',
   contactEmail: 'techhub905@gmail.com',
   whatsapp: '+1234567890',
   whatsappMessage: 'Hello! I need scholarship application help.',

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'motion/react';
 import { Scholarship as Internship } from '../../types';
 import { ImageUploader } from '../../components/ImageUploader';
 import { WORLD_COUNTRIES } from '../../data/countries';
@@ -21,6 +22,7 @@ import {
   AlertTriangle,
   Loader2,
   Sparkles,
+  Zap,
 } from 'lucide-react';
 
 export const ManageInternships: React.FC = () => {
@@ -88,8 +90,7 @@ export const ManageInternships: React.FC = () => {
     fetchInternships();
   }, []);
 
-  const openCreateModal = () => {
-    setEditingId(null);
+  const loadExamplePreset = () => {
     setTitle('CERN Summer Student Paid Internship 2026');
     setCompanyOrOrg('CERN - European Organization for Nuclear Research');
     setCountry('Switzerland');
@@ -105,6 +106,25 @@ export const ManageInternships: React.FC = () => {
     setApplyLink('https://careers.cern/summer-students');
     setImage('/uploads/cern-switzerland.svg');
     setDescription('Fully paid 8-to-13 week summer research internship in Geneva, Switzerland for physics, computing, engineering, and mathematics students.');
+  };
+
+  const openCreateModal = () => {
+    setEditingId(null);
+    setTitle('');
+    setCompanyOrOrg('');
+    setCountry('Switzerland');
+    setDegreeLevel('BS / MS');
+    setCategory('Research Internship');
+    setFundingType('Fully Funded');
+    setFinancialCoverage('');
+    setEligibilityCriteria('');
+    setRequiredDocuments('');
+    setApplicationFee('');
+    setDeadline('');
+    setOfficialLink('');
+    setApplyLink('');
+    setImage('/uploads/cern-switzerland.svg');
+    setDescription('');
     setStatus('open');
     setFormError(null);
     setShowModal(true);
@@ -466,266 +486,297 @@ export const ManageInternships: React.FC = () => {
       )}
 
       {/* Add / Edit Internship Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 space-y-5 shadow-2xl my-8">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="text-xl font-serif font-semibold text-white">
-                {editingId ? 'Edit Internship' : 'Add New Internship'}
-              </h3>
-              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-white">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {formError && (
-              <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-rose-400 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{formError}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleSave} className="space-y-4">
-              {/* Program Title */}
-              <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                  Internship Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. CERN Summer Student Paid Research Internship"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
-                />
-              </div>
-
-              {/* Company / Lab & Degree Level */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <AnimatePresence>
+        {showModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-hidden">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.2 }}
+              className="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full flex flex-col max-h-[92vh] shadow-2xl overflow-hidden text-left"
+            >
+              {/* Fixed Header */}
+              <div className="px-5 py-4 border-b border-slate-800 shrink-0 flex items-center justify-between bg-slate-900/90">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Company / Research Organization *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={companyOrOrg}
-                    onChange={(e) => setCompanyOrOrg(e.target.value)}
-                    placeholder="e.g. CERN, RIKEN, Google Brain"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
-                  />
+                  <h3 className="text-lg sm:text-xl font-serif font-semibold text-white">
+                    {editingId ? 'Edit Internship' : 'Add New Internship'}
+                  </h3>
+                  <p className="text-[11px] text-slate-400 font-sans mt-0.5">
+                    {editingId ? 'Modify internship details' : 'Enter clean internship details to add to database'}
+                  </p>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Degree Level Target *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={degreeLevel}
-                    onChange={(e) => setDegreeLevel(e.target.value)}
-                    placeholder="e.g. BS / MS / PhD"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
-                  />
+                <div className="flex items-center gap-2">
+                  {!editingId && (
+                    <button
+                      type="button"
+                      onClick={loadExamplePreset}
+                      className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-400/30 text-[11px] font-bold rounded-xl transition-all flex items-center gap-1.5 shrink-0"
+                      title="Quick fill with sample data"
+                    >
+                      <Zap className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">Auto-Fill Demo</span>
+                      <span className="sm:hidden">Demo</span>
+                    </button>
+                  )}
+                  <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
 
-              {/* Country & Funding Type */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Host Country *
-                  </label>
-                  <select
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
-                  >
-                    {WORLD_COUNTRIES.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              {/* Form with Scrollable Body and Fixed Footer */}
+              <form onSubmit={handleSave} className="flex flex-col flex-1 overflow-hidden">
+                <div className="p-4 sm:p-6 overflow-y-auto space-y-4 flex-1 font-sans">
+                  {formError && (
+                    <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-rose-400 text-xs flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>{formError}</span>
+                    </div>
+                  )}
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Funding Model *
-                  </label>
-                  <select
-                    value={fundingType}
-                    onChange={(e) => setFundingType(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
-                  >
-                    <option value="Fully Funded">Fully Funded / Paid</option>
-                    <option value="Stipend + Flights">Stipend + Flights</option>
-                    <option value="Partially Funded">Partially Funded</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Deadline Date *
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={deadline}
-                    onChange={(e) => setDeadline(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
-                  />
-                </div>
-              </div>
-
-              {/* Financial Coverage / Stipend */}
-              <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                  Financial Coverage & Monthly Stipend
-                </label>
-                <input
-                  type="text"
-                  value={financialCoverage}
-                  onChange={(e) => setFinancialCoverage(e.target.value)}
-                  placeholder="e.g. CHF 90/day stipend + roundtrip flights + housing support"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
-                />
-              </div>
-
-              {/* Overview Description */}
-              <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                  Detailed Description *
-                </label>
-                <textarea
-                  rows={3}
-                  required
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Comprehensive description of the internship opportunity..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
-                />
-              </div>
-
-              {/* Eligibility & Documents */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Eligibility Criteria
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={eligibilityCriteria}
-                    onChange={(e) => setEligibilityCriteria(e.target.value)}
-                    placeholder="1. Minimum 3 years of university studies..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Required Application Documents
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={requiredDocuments}
-                    onChange={(e) => setRequiredDocuments(e.target.value)}
-                    placeholder="1. Official Transcripts&#10;2. Recommendation Letters..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
-                  />
-                </div>
-              </div>
-
-              {/* Links */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Official Website URL *
-                  </label>
-                  <input
-                    type="url"
-                    required
-                    value={officialLink}
-                    onChange={(e) => setOfficialLink(e.target.value)}
-                    placeholder="https://home.cern"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Direct Application Portal Link
-                  </label>
-                  <input
-                    type="url"
-                    value={applyLink}
-                    onChange={(e) => setApplyLink(e.target.value)}
-                    placeholder="https://careers.cern/apply"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
-                  />
-                </div>
-              </div>
-
-              {/* Banner / Logo Image Upload */}
-              <ImageUploader
-                label="Internship Logo / Banner Image"
-                value={image}
-                onChange={(newUrl) => setImage(newUrl)}
-              />
-
-              {/* Status Selection */}
-              <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                  Application Status
-                </label>
-                <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-300">
+                  {/* Program Title */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                      Internship Title *
+                    </label>
                     <input
-                      type="radio"
-                      name="status"
-                      value="open"
-                      checked={status === 'open'}
-                      onChange={() => setStatus('open')}
-                      className="accent-emerald-500"
+                      type="text"
+                      required
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="e.g. CERN Summer Student Paid Research Internship"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
                     />
-                    <span>Open for Applications</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-300">
-                    <input
-                      type="radio"
-                      name="status"
-                      value="closed"
-                      checked={status === 'closed'}
-                      onChange={() => setStatus('closed')}
-                      className="accent-rose-500"
-                    />
-                    <span>Closed</span>
-                  </label>
-                </div>
-              </div>
+                  </div>
 
-              {/* Submit / Action Controls */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  disabled={submitting}
-                  className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase rounded-xl transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center gap-2"
-                >
-                  {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                  <span>{editingId ? 'Save Changes' : 'Create Internship'}</span>
-                </button>
-              </div>
-            </form>
+                  {/* Company / Lab & Degree Level */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                        Company / Research Organization *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={companyOrOrg}
+                        onChange={(e) => setCompanyOrOrg(e.target.value)}
+                        placeholder="e.g. CERN, RIKEN, Google Brain"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                        Degree Level Target *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={degreeLevel}
+                        onChange={(e) => setDegreeLevel(e.target.value)}
+                        placeholder="e.g. BS / MS / PhD"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Country & Funding Type */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                        Host Country *
+                      </label>
+                      <select
+                        value={country}
+                        onChange={(e) => setCountry(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
+                      >
+                        {WORLD_COUNTRIES.map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                        Funding Model *
+                      </label>
+                      <select
+                        value={fundingType}
+                        onChange={(e) => setFundingType(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
+                      >
+                        <option value="Fully Funded">Fully Funded / Paid</option>
+                        <option value="Stipend + Flights">Stipend + Flights</option>
+                        <option value="Partially Funded">Partially Funded</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                        Deadline Date *
+                      </label>
+                      <input
+                        type="date"
+                        required
+                        value={deadline}
+                        onChange={(e) => setDeadline(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Financial Coverage / Stipend */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                      Financial Coverage & Monthly Stipend
+                    </label>
+                    <input
+                      type="text"
+                      value={financialCoverage}
+                      onChange={(e) => setFinancialCoverage(e.target.value)}
+                      placeholder="e.g. CHF 90/day stipend + roundtrip flights + housing support"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+
+                  {/* Overview Description */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                      Detailed Description *
+                    </label>
+                    <textarea
+                      rows={3}
+                      required
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Comprehensive description of the internship opportunity..."
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+
+                  {/* Eligibility & Documents */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                        Eligibility Criteria
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={eligibilityCriteria}
+                        onChange={(e) => setEligibilityCriteria(e.target.value)}
+                        placeholder="1. Minimum 3 years of university studies..."
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                        Required Application Documents
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={requiredDocuments}
+                        onChange={(e) => setRequiredDocuments(e.target.value)}
+                        placeholder="1. Official Transcripts&#10;2. Recommendation Letters..."
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Links */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                        Official Website URL *
+                      </label>
+                      <input
+                        type="url"
+                        required
+                        value={officialLink}
+                        onChange={(e) => setOfficialLink(e.target.value)}
+                        placeholder="https://home.cern"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                        Direct Application Portal Link
+                      </label>
+                      <input
+                        type="url"
+                        value={applyLink}
+                        onChange={(e) => setApplyLink(e.target.value)}
+                        placeholder="https://careers.cern/apply"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Banner / Logo Image Upload */}
+                  <ImageUploader
+                    label="Internship Logo / Banner Image"
+                    value={image}
+                    onChange={(newUrl) => setImage(newUrl)}
+                  />
+
+                  {/* Status Selection */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                      Application Status
+                    </label>
+                    <div className="flex items-center gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-300">
+                        <input
+                          type="radio"
+                          name="status"
+                          value="open"
+                          checked={status === 'open'}
+                          onChange={() => setStatus('open')}
+                          className="accent-emerald-500"
+                        />
+                        <span>Open for Applications</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-300">
+                        <input
+                          type="radio"
+                          name="status"
+                          value="closed"
+                          checked={status === 'closed'}
+                          onChange={() => setStatus('closed')}
+                          className="accent-rose-500"
+                        />
+                        <span>Closed</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Submit / Action Controls */}
+                <div className="px-5 py-4 border-t border-slate-800 bg-slate-900/95 shrink-0 flex items-center justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    disabled={submitting}
+                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase rounded-xl transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="px-5 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center gap-2"
+                  >
+                    {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                    <span>{editingId ? 'Save Changes' : 'Create Internship'}</span>
+                  </button>
+                </div>
+              </form>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 };
