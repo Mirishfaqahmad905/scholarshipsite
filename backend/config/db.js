@@ -216,13 +216,15 @@ const connectDB = async () => {
     return mongoose.connection;
   }
 
-  mongoose.set('bufferCommands', false);
-
-  const uri =
+  let uri =
     process.env.MONGODB_URI ||
     process.env.MONGO_URI ||
     process.env.DATABASE_URL ||
     'mongodb+srv://techhub905_db_user:lE6ZJ2Ygh5sujI1t@cluster0.efqbfvq.mongodb.net/scholarship_portal?retryWrites=true&w=majority';
+
+  if (typeof uri === 'string') {
+    uri = uri.trim().replace(/^["']|["']$/g, '').trim();
+  }
 
   try {
     const conn = await mongoose.connect(uri, {
